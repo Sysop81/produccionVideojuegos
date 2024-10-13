@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
     
     private GameObject _player;
-    private float _limit = 5f;
+    [SerializeField] private float offsetX = 2f; //  Horizontal offset 
     
     // Start is called before the first frame update
     void Start()
@@ -17,21 +18,16 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Get X axis player position
-        float x = _player.transform.position.x;
+        // Only if game is stopped
+        if (Time.timeScale == 0) return;
         
-        // Check if X player position if out of limit. 
-        /*if (x > _limit)
+        // Get actual player position
+        Vector3 playerPosition = _player.transform.position;
+
+        // Only update a camera position if player is ahead 
+        if (playerPosition.x > transform.position.x - offsetX)
         {
-            x = _limit;
-        }else*/ if (x < - _limit)
-        {
-            x = - _limit;
+            transform.position = new Vector3(playerPosition.x + offsetX, transform.position.y, transform.position.z);
         }
-        
-        // Set a position camera with player positions
-        gameObject.transform.position = new Vector3(x, 
-            gameObject.transform.position.y,
-            gameObject.transform.position.z);
     }
 }
