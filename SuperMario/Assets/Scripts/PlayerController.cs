@@ -29,7 +29,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         
-        
         // Jumping
         if (Input.GetKey("up") && canJump)
         {
@@ -57,16 +56,13 @@ public class PlayerController : MonoBehaviour
         }        
     }
 
-    // Se ejecuta mientras sigue colisionando (por ejemplo, con el suelo)
+    // Trigger OnCollisionStay2D
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "ground" && rb2D.velocity.y < 0)
+        if (collision.gameObject.CompareTag("ground") && rb2D.velocity.y < 0)
         {
             gameObject.GetComponent<Animator>().SetBool("isSaltando", false);
-            
             canJump = true;
-            Debug.Log(rb2D.velocity.y);
-            return;
         }
     }
 
@@ -74,61 +70,48 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         
-        // Verificar la normal de colisión
-        ContactPoint2D contact = collision.contacts[0];  // Obtenemos el primer punto de contacto
+        // Verify the normal collision
+        ContactPoint2D contact = collision.contacts[0];  
         Vector2 normal = contact.normal;
         
         // If player collision with ground change var canJump and reset animation
-        if (collision.gameObject.tag == "ground")
+        if (collision.gameObject.CompareTag("ground"))
         {
             gameObject.GetComponent<Animator>().SetBool("isSaltando", false);
-            //canJump = normal.y != 0;
             canJump = true;
-            Debug.Log(rb2D.velocity.y);
             return;
         }
-
-        if (collision.gameObject.tag == "Brick")
+        
+        // Brick collision
+        if (collision.gameObject.CompareTag("Brick"))
         {
             
-            // Verificar la normal de colisión
-            //ContactPoint2D contact = collision.contacts[0];  // Obtenemos el primer punto de contacto
-            //Vector2 normal = contact.normal;
-
             if (normal.y >= 0.0f)
             {
                 gameObject.GetComponent<Animator>().SetBool("isSaltando", false);
                 canJump = normal.y != 0;
-                Debug.Log("peta...................................................... brick");
                 return;
             }
 
-            
-            
+            // If Mario is big -> destroy the brick
             if (!isSmall)
             {
                 Destroy(collision.gameObject);
-
                 return;
             }
 
-            // Set animation to move bricks
+            // If Mario is small. Load corrutine to set animation to move bricks
             StartCoroutine(MoveBrick(collision.gameObject,0.2f,5f,0.1f));
         }
-
-        if (collision.gameObject.tag == "SurpriseBox")
+        
+        // SurpriseBox collisions
+        if (collision.gameObject.CompareTag("SurpriseBox"))
         {
             
-            // Verificar la normal de colisión
-            //ContactPoint2D contact = collision.contacts[0];  // Obtenemos el primer punto de contacto
-            //Vector2 normal = contact.normal;
-
             if (normal.y >= 0.0f)
             {
                 gameObject.GetComponent<Animator>().SetBool("isSaltando", false);
                 canJump = normal.y != 0;
-                
-                Debug.Log("peta...................................................... surprise");
                 return;
             }
             
@@ -136,9 +119,10 @@ public class PlayerController : MonoBehaviour
             // Set animation to move bricks
             StartCoroutine(MoveBrick(collision.gameObject,0.2f,5f,0.1f));
             
-            // Change animation
+            // Change animation to surpriseBox
             collision.gameObject.GetComponent<Animator>().SetBool("isHitted", true);
 
+            // Instanciate a mushrrom
             if (!_isMushroomout && collision.gameObject.transform.position.x > 7.5 && collision.gameObject.transform.position.x < 7.52)
             {
                 Instantiate(mushroom, new Vector3(collision.gameObject.transform.position.x + 0.5f,
@@ -146,8 +130,9 @@ public class PlayerController : MonoBehaviour
                 _isMushroomout = true;
             }
         }
-
-        if (collision.gameObject.tag == "mushroom")
+        
+        // Collision with mushroom object
+        if (collision.gameObject.CompareTag("mushroom"))
         {
             Destroy(collision.gameObject);
             isSmall = false;
@@ -155,29 +140,18 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(10f, 9f, 1f);
         }
     }
+    
 
-    /*void OnCollisionExit2D(Collision2D collision)
-    {
-        // If player collision with ground change var canJump and reset animation
-        if (collision.gameObject.tag == "ground")
-        {
-            //gameObject.GetComponent<Animator>().SetBool("isSaltando", false);
-            //canJump = normal.y != 0;
-            canJump = false;
-            //Debug.Log("peta......................................................");
-            
-        }
-    }*/
-
-    // Coroutine para mover el ladrillo hde arriba a abajo
+    // Coroutine to move any brick when Mario hit hits from below
     private IEnumerator MoveBrick(GameObject brick, float moveDistance, float moveSpeed, float moveDuration)
     {
+        // Get original brik position
         var originalPosition = brick.transform.position;
         
-        // Guardar el tiempo inicial
+        // Save initial time 
         float elapsedTime = 0f;
 
-        // Mover hacia arriba durante la mitad del tiempo total
+        // Move up for half the total time
         while (elapsedTime < moveDuration / 2f)
         {
             brick.transform.position = Vector3.Lerp(originalPosition, originalPosition + Vector3.up * moveDistance, elapsedTime / (moveDuration / 2f));
@@ -185,10 +159,10 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // Restablecer el temporizador para la bajada
+        // Restar counter for the descent
         elapsedTime = 0f;
 
-        // Mover hacia abajo durante la otra mitad del tiempo total
+        // Move down for the rest of total time
         while (elapsedTime < moveDuration / 2f)
         {
             brick.transform.position = Vector3.Lerp(originalPosition + Vector3.up * moveDistance, originalPosition, elapsedTime / (moveDuration / 2f));
@@ -196,8 +170,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // Al final de la animación, asegúrate de que el ladrillo esté en su posición original
+        // Set brick transform to original position
         brick.transform.position = originalPosition;
-        
     }
 }

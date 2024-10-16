@@ -23,15 +23,7 @@ public class moveFlag : MonoBehaviour
             if (transform.position.y > _player.transform.position.y)
             {
                 transform.Translate(Time.deltaTime * _moveSpeed * Vector3.down);
-                Debug.Log("Y vale -> " + transform.position.y + " y mario vale -> " + _player.transform.position.y);
-                Debug.Log("Y vale -> " + (transform.position.y + 0.1) + " y mario vale -> " + _player.transform.position.y);
-            }/*else if (transform.position.y + 0.1 < _player.transform.position.y)
-            {
-                Time.timeScale = 0f;
-                Debug.Log("Paramos");
-            }*/
-
-
+            }
         }
     }
 
@@ -40,8 +32,7 @@ public class moveFlag : MonoBehaviour
         
         if (collision.gameObject.tag == "Player")
         {
-
-            GetComponent<BoxCollider2D>().enabled = _player.transform.position.y > transform.position.y;  //false;
+            GetComponent<BoxCollider2D>().enabled = _player.transform.position.y > transform.position.y;
             _moveFlag = true;
         }
     }
