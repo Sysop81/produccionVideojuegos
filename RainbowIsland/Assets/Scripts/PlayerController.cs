@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour
     // Method Jump
     private void Jump()
     {
+        
+        _animator.SetFloat("jumpVelocity", _rb.velocity.y);
         if (Input.GetKeyDown(KeyCode.UpArrow) && canJump)
         {
             _animator.SetBool(IS_WALKING_STR, false);
@@ -65,7 +67,6 @@ public class PlayerController : MonoBehaviour
         // Right, left, wait moves
         if(Input.GetKey(KeyCode.RightArrow) && canJump)
         {
-            Debug.Log("me muevo");
             _animator.SetBool(IS_WALKING_STR, true);
             _spriteRenderer.flipX = false;
             
@@ -172,6 +173,8 @@ public class PlayerController : MonoBehaviour
         {
             isClimbing = false;
         }
+        
+        //_animator.SetFloat("jumpVelocity", _rb.velocity.y);
     }
     
 }
