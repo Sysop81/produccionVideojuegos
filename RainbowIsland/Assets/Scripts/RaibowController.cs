@@ -16,11 +16,11 @@ public class RaibowController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*_time += Time.deltaTime;
+        _time += Time.deltaTime;
 
         if (_time >= 2)
         {
             Destroy(gameObject);
-        }*/
+        }
     }
 }
