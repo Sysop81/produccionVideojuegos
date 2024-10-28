@@ -136,6 +136,16 @@ public class PlayerController : MonoBehaviour
         
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Rainbow"))
         {
+            
+
+            /*if (contact.normal.y < 0) 
+            {
+                Debug.Log("Player collision with ground -> " + contact.normal.y);
+               
+                transform.position = new Vector3(transform.position.x,
+                    transform.position.y + 2, transform.position.z);
+            }*/
+
             //foreach (var contact in collision.contacts)
             //{
                 //Debug.Log(contact.normal);
