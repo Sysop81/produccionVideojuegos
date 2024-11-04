@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     private const string IS_JUMPING_STR = "canJump";
     private const float RAINBOW_OFFSET = 4.5f;
      
-    
     private Rigidbody2D _rb;
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
@@ -82,10 +81,8 @@ public class PlayerController : MonoBehaviour
             _animator.SetBool(IS_WALKING_STR, true);
             _spriteRenderer.flipX = true;
             
-
             if (isClimbing && _rb.velocity.y >= 0.0f)
             {
-                
                 Climbing(-1);
                 return;
             }
@@ -102,7 +99,6 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            
             Instantiate(rainBow,
                 new Vector3(transform.position.x +  (_spriteRenderer.flipX ? -RAINBOW_OFFSET : RAINBOW_OFFSET),
                     transform.position.y,
@@ -111,7 +107,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    
+    // Method Climbing
     private void Climbing(float direction)
     {
         // Upper diagonal force "Left && Right direction"
@@ -136,36 +132,16 @@ public class PlayerController : MonoBehaviour
         
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Rainbow"))
         {
-            
-
-            /*if (contact.normal.y < 0) 
+            if (contact.normal.y > 0)
             {
-                Debug.Log("Player collision with ground -> " + contact.normal.y);
-               
-                transform.position = new Vector3(transform.position.x,
-                    transform.position.y + 2, transform.position.z);
-            }*/
-
-            //foreach (var contact in collision.contacts)
-            //{
-                //Debug.Log(contact.normal);
-                if (contact.normal.y > 0)
-                {
-                    _animator.SetBool(IS_JUMPING_STR, false);
-                    canJump = true;
-                    isClimbing = false;
-                }
-            //}*/
-            
-            /*_animator.SetBool(IS_JUMPING_STR, false);
-            canJump = true;
-            isClimbing = false;*/
+               _animator.SetBool(IS_JUMPING_STR, false);
+               canJump = true;
+               isClimbing = false;
+            }
         }
         
         if (collision.gameObject.CompareTag("Rainbow"))
         {
-            //ContactPoint2D contact = collision.contacts[0];
-            //Vector2 normal = contact.normal;
             
             if (normal.y >= 0.0f)
             {
@@ -177,14 +153,12 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    // Trigger OnCollisionExit2D
     void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Rainbow"))
         {
             isClimbing = false;
         }
-        
-        //_animator.SetFloat("jumpVelocity", _rb.velocity.y);
     }
-    
 }

@@ -6,6 +6,7 @@ public class RaibowController : MonoBehaviour
 {
 
     private float _time;
+    private const float MAX_TIME = 2;
     
     // Start is called before the first frame update
     void Start()
@@ -18,7 +19,7 @@ public class RaibowController : MonoBehaviour
     {
         _time += Time.deltaTime;
 
-        if (_time >= 2)
+        if (_time >= MAX_TIME)
         {
             Destroy(gameObject);
         }
