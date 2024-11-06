@@ -10,8 +10,9 @@ public class PlayerController : MonoBehaviour
     private static readonly int IsUp = Animator.StringToHash("isUp");
 
     [SerializeField] private float speedForce;
-    //[SerializeField] private GameObject shootPrefab;
     [SerializeField] private GameObject[] shoots;
+    [SerializeField] private GameObject shootLoad;
+    [SerializeField] private GameObject mainCamera;
     
     private float _hMove;
     private float _vMove;
@@ -20,6 +21,9 @@ public class PlayerController : MonoBehaviour
     private const float _SHOOT_TIME = 1f;
     private float _time;
     private bool _canUpdateTime;
+    private float _cameraSpeed;
+
+    private bool _isShootLoadActive;
     
     // Start is called before the first frame update
     void Start()
@@ -27,6 +31,8 @@ public class PlayerController : MonoBehaviour
         speedForce = 6.0f;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
+
+        _cameraSpeed = mainCamera.GetComponent<CameraController>().GetForwardSpeed();
     }
 
     // Update is called once per frame
@@ -60,21 +66,30 @@ public class PlayerController : MonoBehaviour
         }
         
         // Change the Rigidbody velocity 
-        if (_hMove != 0)
+        if (_hMove != 0 || _vMove != 0)
         {
             _rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
         }
         else
         {
-            _rb.velocity = new Vector2(1,_vMove).normalized * 1f;
+            _rb.velocity = new Vector2(1, 0).normalized * _cameraSpeed; 
         }
 
     }
 
     private void GenerateShoot()
     {
-        
-        if(_canUpdateTime) _time += Time.deltaTime;
+
+        if (_canUpdateTime)
+        {
+            _time += Time.deltaTime;
+
+            if (!_isShootLoadActive && _time > 0.2f)
+            {
+                shootLoad.SetActive(true);
+                _isShootLoadActive = true;
+            }
+        }
         
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -83,12 +98,18 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            
-            //Debug.Log(_time + " < " + _SHOOT_TIME +" = " + (_time < _SHOOT_TIME));
+
+            if (_isShootLoadActive)
+            {
+                shootLoad.SetActive(false);
+                _isShootLoadActive = false;
+            }
+
             var currentShootType = _time < _SHOOT_TIME ? shoots[0] : shoots[1];
+            var xOffset = _time < _SHOOT_TIME ? 0.8f : 1.7f;
             
             Instantiate(currentShootType,
-                new Vector3(transform.position.x + 0.8f,
+                new Vector3(transform.position.x + xOffset,
                     transform.position.y - 0.2f,
                     0.00f),
                 transform.rotation);

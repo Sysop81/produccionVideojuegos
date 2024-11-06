@@ -31,4 +31,9 @@ public class CameraController : MonoBehaviour
             _isMove = false;
         }
     }
+
+    public float GetForwardSpeed()
+    {
+        return forwardSpeed;
+    }
 }
