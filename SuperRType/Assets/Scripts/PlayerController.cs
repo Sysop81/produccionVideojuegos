@@ -118,4 +118,13 @@ public class PlayerController : MonoBehaviour
             _canUpdateTime = false;
         }
     }
+    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+            
+       if (other.gameObject.CompareTag("playerLimit"))
+       {
+          transform.position = new Vector2(other.transform.position.x - 1.345f, transform.position.y);
+       }
+    }
 }

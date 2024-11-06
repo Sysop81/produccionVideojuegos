@@ -6,6 +6,7 @@ TagManager:
   tags:
   - LimitZone
   - FinishZone
+  - playerLimit
   layers:
   - Default
   - TransparentFX
