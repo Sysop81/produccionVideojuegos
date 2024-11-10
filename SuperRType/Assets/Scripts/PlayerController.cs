@@ -21,8 +21,10 @@ public class PlayerController : MonoBehaviour
     private const float _SHOOT_TIME = 1f;
     private float _time;
     private bool _canUpdateTime;
-    private float _cameraSpeed;
-
+    private  CameraController _cameraScript;
+    private Camera _camera;
+    private const float _X_LIMIT_OFFSET = 0.7f;
+    private const float _Y_LIMIT_OFFSET = 0.4f;
     private bool _isShootLoadActive;
     
     // Start is called before the first frame update
@@ -32,14 +34,23 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
 
-        _cameraSpeed = mainCamera.GetComponent<CameraController>().GetForwardSpeed();
+        _cameraScript = mainCamera.GetComponent<CameraController>();
+        _camera = mainCamera.GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Check Player directions
-        MoveDirection();
+        if (_cameraScript.IsMove())
+        {
+            // Check Player directions
+            MoveDirection();
+        }
+        else
+        {
+            // Atomotic player move
+            MoveXplayerAuto(_cameraScript.GetForwardSpeed());
+        }
         
         // Shoot
         GenerateShoot();
@@ -72,9 +83,16 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _rb.velocity = new Vector2(1, 0).normalized * _cameraSpeed; 
+            /*_rb.velocity = new Vector2(1, 0).normalized * _cameraScript.GetForwardSpeed();*/
+            MoveXplayerAuto(_cameraScript.GetForwardSpeed());
         }
+        
+        CheckLimits();
+    }
 
+    private void MoveXplayerAuto(float xSpeed)
+    {
+        _rb.velocity = new Vector2(1, 0).normalized * xSpeed; 
     }
 
     private void GenerateShoot()
@@ -122,9 +140,40 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
             
-       if (other.gameObject.CompareTag("playerLimit"))
+       /*if (other.gameObject.CompareTag("playerLimit"))
        {
           transform.position = new Vector2(other.transform.position.x - 1.345f, transform.position.y);
+       }*/
+       
+       if (other.gameObject.CompareTag("LimitZone"))
+       {
+           Time.timeScale = 0;
+           Debug.Log("¡¡¡ End Game !!!");
        }
+    }
+
+    private void CheckLimits()
+    {
+        // Get display limits on world
+        Vector3 xLeft = _camera.ViewportToWorldPoint(new Vector3(0, 0.5f, _camera.nearClipPlane));
+        Vector3 xRight = _camera.ViewportToWorldPoint(new Vector3(1, 0.5f, _camera.nearClipPlane));
+        Vector3 yTop = _camera.ViewportToWorldPoint(new Vector3(0.5f, 1, _camera.nearClipPlane));
+        Vector3 yDown = _camera.ViewportToWorldPoint(new Vector3(0.5f, 0, _camera.nearClipPlane));
+
+        // Apply offset to display limits 
+        xLeft.x += _X_LIMIT_OFFSET;
+        xRight.x -= _X_LIMIT_OFFSET;
+        yTop.y -= _Y_LIMIT_OFFSET;
+        yDown.y += _Y_LIMIT_OFFSET;
+        
+        // Get current player position
+        Vector3 playerPosition = transform.position;
+
+        // Update a player position 
+        playerPosition.x = Mathf.Clamp(playerPosition.x, xLeft.x, xRight.x);
+        playerPosition.y = Mathf.Clamp(playerPosition.y, yDown.y, yTop.y);
+
+        // Apply changes to player transform position
+        transform.position = playerPosition;
     }
 }

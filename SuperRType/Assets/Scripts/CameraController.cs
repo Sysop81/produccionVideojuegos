@@ -36,4 +36,9 @@ public class CameraController : MonoBehaviour
     {
         return forwardSpeed;
     }
+
+    public bool IsMove()
+    {
+        return _isMove;
+    }
 }
