@@ -19,7 +19,11 @@ public class ShootController : MonoBehaviour
     {
         _rb.velocity = new Vector2(1, 0).normalized * speed;
     }
-
+    
+    /// <summary>
+    /// Trigger OnTriggerEnter2D
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("LimitZone")) 

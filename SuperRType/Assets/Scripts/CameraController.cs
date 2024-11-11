@@ -8,12 +8,6 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] private float forwardSpeed = 5.0f;
     private bool _isMove = true;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -22,7 +16,10 @@ public class CameraController : MonoBehaviour
             transform.Translate( forwardSpeed * Time.deltaTime * Vector2.right);
     }
     
-    
+    /// <summary>
+    /// Trigger OnTriggerEnter2D
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter2D(Collider2D other)
     {
         
@@ -31,12 +28,20 @@ public class CameraController : MonoBehaviour
             _isMove = false;
         }
     }
-
+    
+    /// <summary>
+    /// Getter GetForwardSpeed
+    /// </summary>
+    /// <returns></returns>
     public float GetForwardSpeed()
     {
         return forwardSpeed;
     }
-
+    
+    /// <summary>
+    /// Getter IsMove
+    /// </summary>
+    /// <returns></returns>
     public bool IsMove()
     {
         return _isMove;

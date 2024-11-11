@@ -55,7 +55,11 @@ public class PlayerController : MonoBehaviour
         // Shoot
         GenerateShoot();
     }
-
+    
+    /// <summary>
+    /// Method MoveDirection
+    /// This method move the player and set animation
+    /// </summary>
     private void MoveDirection()
     {
         // Get move axes
@@ -83,10 +87,10 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            /*_rb.velocity = new Vector2(1, 0).normalized * _cameraScript.GetForwardSpeed();*/
             MoveXplayerAuto(_cameraScript.GetForwardSpeed());
         }
         
+        // Manage screen camera player limits
         CheckLimits();
     }
 
@@ -94,7 +98,11 @@ public class PlayerController : MonoBehaviour
     {
         _rb.velocity = new Vector2(1, 0).normalized * xSpeed; 
     }
-
+    
+    /// <summary>
+    /// Method GenerateShoot
+    /// This method generate and manage the player shoot [short and long]
+    /// </summary>
     private void GenerateShoot()
     {
 
@@ -137,21 +145,24 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Trigger OnTriggerEnter2D
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter2D(Collider2D other)
     {
-            
-       /*if (other.gameObject.CompareTag("playerLimit"))
-       {
-          transform.position = new Vector2(other.transform.position.x - 1.345f, transform.position.y);
-       }*/
-       
+        
        if (other.gameObject.CompareTag("LimitZone"))
        {
            Time.timeScale = 0;
            Debug.Log("¡¡¡ End Game !!!");
        }
     }
-
+    
+    /// <summary>
+    /// Method CheckLimits
+    /// This method checks the player limits
+    /// </summary>
     private void CheckLimits()
     {
         // Get display limits on world
