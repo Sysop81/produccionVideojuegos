@@ -7,6 +7,8 @@ TagManager:
   - LimitZone
   - FinishZone
   - playerLimit
+  - RockBase
+  - Explosion
   layers:
   - Default
   - TransparentFX

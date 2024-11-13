@@ -7,6 +7,7 @@ public class ShootController : MonoBehaviour
 
     [SerializeField] private float speed = 10.0f;
     private Rigidbody2D _rb;
+    private const int DAMAGE = 1; 
     
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,15 @@ public class ShootController : MonoBehaviour
         if (collision.gameObject.CompareTag("LimitZone")) 
         {
             Destroy(gameObject);
+        }
+    }
+    
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("RockBase"))
+        {
+            Destroy(gameObject);
+            other.gameObject.GetComponent<EnemyBaseController>().UpdateLife(DAMAGE);
         }
     }
 }
