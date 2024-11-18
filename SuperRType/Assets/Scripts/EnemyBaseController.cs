@@ -49,12 +49,19 @@ public class EnemyBaseController : MonoBehaviour
         // This base is destroyed by player
         _animator.SetBool(IsDestroy,true);
         
-        // Launch Explosion animation
-        var x = Random.Range(transform.position.x, transform.position.x + 0.2f);
-        var y = Random.Range(transform.position.y, transform.position.y + 0.2f);
+        
         for (int i = 0; i < 6; i++)
         {
-            Instantiate(explosion, transform.position, Quaternion.identity);
+            Instantiate(explosion, GetAleatoryTranformPosition(), Quaternion.identity);
         }
+    }
+    
+    private Vector3 GetAleatoryTranformPosition()
+    {
+        var offset = 0.5f;
+        var x = Random.Range(transform.position.x -offset, transform.position.x + offset);
+        var y = Random.Range(transform.position.y -offset, transform.position.y + offset);
+        
+        return new Vector3(x,y,transform.position.z);
     }
 }
