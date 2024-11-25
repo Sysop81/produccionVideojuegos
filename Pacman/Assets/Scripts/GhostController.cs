@@ -8,15 +8,20 @@ public class GhostController : MonoBehaviour
 {
     
     [SerializeField] private LayerMask wallMask;
+    [SerializeField] private Transform player;
+    [SerializeField] GameManager gameManager;
     private Animator _animator;
     private Rigidbody2D _rb;
-    private int _hMove,_vMove;
+    //private int _hMove,_vMove;
     private float[] _movements;
+    
+    
+    
     // Start is called before the first frame update
     void Start()
     {
-        _hMove = 0;
-        _vMove = -1;
+        //_hMove = 0;
+        //_vMove = -1;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
     }
@@ -26,39 +31,35 @@ public class GhostController : MonoBehaviour
     {
         
         
-        /*if (CheckMovement(Vector2.up))
-        {
-            Debug.Log("Move UP");
-            _hMove = 0;
-            _vMove = 1;
-        } else if (CheckMovement(Vector2.down))
-        {
-            Debug.Log("Move DOWN");
-            _hMove = 0;
-            _vMove = -1;
-        } else if (CheckMovement(Vector2.left))
-        {
-            Debug.Log("Move LEFT");
-            _hMove = -1;
-            _vMove = 0;
-        } else if (CheckMovement(Vector2.right))
-        {
-            Debug.Log("Move RIGHT");
-            _hMove = 1;
-            _vMove = 0;
-        }
-        else
-        {
-            Debug.Log("Move ELSE 0 0");
-            _hMove = 0;
-            _vMove = 0;
-        }*/
         
-        MoveDirection(_hMove,_vMove);
+        //MoveDirection(_hMove,_vMove);
+        if(gameManager.gameState == GameState.GameOver) Destroy(gameObject);
+        
+        if (player)
+        {
+            Vector2 direction = (player.position - transform.position).normalized;
+            
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.5f, wallMask);
+
+            if (!hit.collider)
+            {
+                _rb.velocity = direction * 1.5f;
+            }
+            else
+            {
+                _rb.velocity = Vector2.zero;
+            }
+
+
+
+            //MoveDirection((int)direction.x, (int)direction.y);
+            //transform.position +=  (Vector3)direction * 2.0f * Time.deltaTime;
+        }
     }
 
     void MoveDirection(int hMove, int vMove)
     {
+        Debug.Log(hMove + "," +vMove);
         _rb.velocity = new Vector2(hMove,vMove).normalized * 1f;
     }
     
@@ -83,7 +84,8 @@ public class GhostController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            var exit = false;
+            // Testing ...
+            /*var exit = false;
             while (!exit)
             {
                 var vector = GetRandomMovement();
@@ -119,7 +121,7 @@ public class GhostController : MonoBehaviour
                     _hMove = 0;
                     _vMove = 0;
                 }
-            }
+            }*/
 
             
         }
@@ -127,44 +129,8 @@ public class GhostController : MonoBehaviour
 
     private Vector2 GetRandomMovement()
     {
-        Vector2[] movements = { Vector2.left,Vector2.up, Vector2.down, Vector2.right };
+        Vector2[] movements = {Vector2.up, Vector2.left, Vector2.down, Vector2.right };
         
-        return movements[UnityEngine.Random.Range(0, movements.Length)];
+        return movements[Random.Range(0, movements.Length)];
     }
-
-    /*private void OnTriggerStay2D(Collider2D collision)
-    {
-        Debug.Log("Trigger con + " );
-        if (collision.gameObject.CompareTag("Direction"))
-        {
-            /*if (CheckMovement(Vector2.up))
-            {
-                Debug.Log("Move UP");
-                _hMove = 0;
-                _vMove = 1;
-            } else if (CheckMovement(Vector2.down))
-            {
-                Debug.Log("Move DOWN");
-                _hMove = 0;
-                _vMove = -1;
-            } else if (CheckMovement(Vector2.left))
-            {
-                Debug.Log("Move LEFT");
-                _hMove = -1;
-                _vMove = 0;
-            } else if (CheckMovement(Vector2.right))
-            {
-                Debug.Log("Move RIGHT");
-                _hMove = 1;
-                _vMove = 0;
-            }
-            else
-            {
-                Debug.Log("Move ELSE 0 0");
-                _hMove = 0;
-                _vMove = 0;
-            }
-        }
-
-    }*/
 }

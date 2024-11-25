@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speedForce;
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private GameObject[] lives;
+    [SerializeField] GameManager gameManager;
     private Animator _animator;
     private Rigidbody2D _rb;
     private SpriteRenderer _sr;
     private float _hMove;
     private float _vMove;
     private Vector2 _movement;
+    private bool _hasPowerUp;
     
     // Start is called before the first frame update
     void Start()
@@ -24,15 +26,22 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
+        gameManager.StartGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoveDirection();
+        if(gameManager.gameState == GameState.GameOver) Destroy(gameObject);
+        
+        if (gameManager.gameState == GameState.InGame)
+        {
+            MoveDirection();
+        }
+        
     }
     
-    private void MoveDirection()
+    private void MoveDirection() // TODO REFACT THIS METHOD!!
     {
         // Get move axes
         _hMove = Input.GetAxis("Horizontal");
@@ -115,7 +124,6 @@ public class PlayerController : MonoBehaviour
     }
 
     
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("MagicDoor"))
@@ -137,7 +145,25 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag("Coin") || other.CompareTag("BigCoin"))
         {
+            gameManager.UpdateScore(100);
             Destroy(other.gameObject);
+        }
+        
+        if (other.gameObject.CompareTag("Ghost"))
+        {
+            if (!_hasPowerUp)
+            {
+                gameManager.GameOver();
+            }
+
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ghost"))
+        {
+            Debug.Log("collisio with Ghost");
         }
     }
 }

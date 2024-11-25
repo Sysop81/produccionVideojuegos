@@ -9,6 +9,7 @@ TagManager:
   - BigCoin
   - Coin
   - Direction
+  - Ghost
   layers:
   - Default
   - TransparentFX
@@ -18,8 +19,8 @@ TagManager:
   - UI
   - Wall
   - Coins
-  - 
-  - 
+  - Ghost
+  - Player
   - 
   - 
   - 
