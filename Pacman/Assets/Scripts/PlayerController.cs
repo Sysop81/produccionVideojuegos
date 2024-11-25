@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] private float speedForce;
     [SerializeField] private LayerMask wallMask;
-    
+    [SerializeField] private GameObject[] lives;
     private Animator _animator;
     private Rigidbody2D _rb;
     private SpriteRenderer _sr;
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
             _movement = new Vector2(_hMove, 0).normalized * speedForce;
             if (CheckMovement(Vector2.left))
             {
-                _sr.flipX = false;
+                _sr.flipX = true;
                 _animator.SetBool(IsHmove, true);
                 _animator.SetBool(IsVmove, false);
                 _rb.velocity = _movement;
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
             /*_rb.velocity =*/ _movement = new Vector2(_hMove, 0).normalized * speedForce;
             if (CheckMovement(Vector2.right))
             {
-                _sr.flipX = true;
+                _sr.flipX = false;
                 _animator.SetBool(IsHmove, true);
                 _animator.SetBool(IsVmove, false);
                 _rb.velocity = _movement;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
             {
                 _animator.SetBool(IsVmove, true);
                 _animator.SetBool(IsHmove, false);
-                _sr.flipY = false;
+                _sr.flipY = true;
                 _rb.velocity = _movement;
             }
         }
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
             {
                 _animator.SetBool(IsVmove, true);
                 _animator.SetBool(IsHmove, false);
-                _sr.flipY = true;
+                _sr.flipY = false;
                 _rb.velocity = _movement;
             }
         }

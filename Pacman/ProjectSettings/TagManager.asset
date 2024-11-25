@@ -8,6 +8,7 @@ TagManager:
   - MagicDoor
   - BigCoin
   - Coin
+  - Direction
   layers:
   - Default
   - TransparentFX
