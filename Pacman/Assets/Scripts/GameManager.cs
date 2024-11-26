@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System.Linq;
 
 
 public enum GameState
@@ -20,13 +21,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private List<GameObject> lives;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject readyPanel;
     private int _maxScore;
     private int _score;
     private int _numLives;
+    private GhostController[] _ghosts;
     
     // Start is called before the first frame update
     void Start()
     {
+        _ghosts = FindObjectsOfType<GhostController>();
         _numLives = lives.Count;
         ShowMaxScore();
     }
@@ -88,7 +92,6 @@ public class GameManager : MonoBehaviour
 
         if (_numLives <= 0)
         {
-            Debug.Log("Game Over");
             SetMaxScore();
             gameOverPanel.SetActive(true);
             gameState = GameState.GameOver;
@@ -96,15 +99,34 @@ public class GameManager : MonoBehaviour
             //restartButton.gameObject.SetActive(true);
             //return;
         }
+        else
+        {
+            StartCoroutine(ManageReadyPanel());
+        }
         
         UpdatePanelLives();
     }
 
     public void StartGame()
     {
+        
         gameOverPanel.SetActive(false);
-        gameState = GameState.InGame;
         UpdateScore(0);
+        StartCoroutine(ManageReadyPanel());
+    }
+
+    public void UpdateGhostVisibility(bool visibility)
+    {
+        _ghosts.ToList().ForEach(ghost => ghost.gameObject.SetActive(visibility));
+    }
+
+    private IEnumerator ManageReadyPanel()
+    {
+        readyPanel.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        readyPanel.SetActive(false);
+        gameState = GameState.InGame;
+        
     }
 
 }

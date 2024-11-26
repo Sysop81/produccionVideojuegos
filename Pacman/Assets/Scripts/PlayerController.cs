@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     private static readonly int IsHmove = Animator.StringToHash("isHmove");
     private static readonly int IsVmove = Animator.StringToHash("isVmove");
+    private static readonly int IsDead = Animator.StringToHash("isDead");
     
     [SerializeField] private float speedForce;
     [SerializeField] private LayerMask wallMask;
@@ -19,10 +20,12 @@ public class PlayerController : MonoBehaviour
     private float _vMove;
     private Vector2 _movement;
     private bool _hasPowerUp;
+    private Vector3 _initialTransform;
     
     // Start is called before the first frame update
     void Start()
     {
+        _initialTransform = transform.position;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
@@ -153,17 +156,33 @@ public class PlayerController : MonoBehaviour
         {
             if (!_hasPowerUp)
             {
-                gameManager.GameOver();
+                /*var enemies = GameObject.FindObjectsOfType<GhostController>();
+                foreach (var e in enemies)
+                {
+                    e.gameObject.SetActive(false);
+                }*/
+                gameManager.UpdateGhostVisibility(false);
+                StartCoroutine(ManagePlayerDeath());
             }
 
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ghost"))
         {
             Debug.Log("collisio with Ghost");
         }
+    }*/
+
+    IEnumerator ManagePlayerDeath()
+    {
+        
+        _animator.SetTrigger(IsDead);
+        yield return new WaitForSeconds(2f);
+        transform.position = _initialTransform;
+        gameManager.GameOver();
+        gameManager.UpdateGhostVisibility(true);
     }
 }
