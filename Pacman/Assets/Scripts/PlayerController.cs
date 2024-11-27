@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _movement;
     private bool _hasPowerUp;
     private Vector3 _initialTransform;
+    private const int POWER_UP_TIME = 10;
     
     // Start is called before the first frame update
     void Start()
@@ -104,26 +105,21 @@ public class PlayerController : MonoBehaviour
 
     private bool CheckMovement(Vector2 pDirection)
     {
-        // Check direction with raycast 
-        /*RaycastHit2D hit = Physics2D.Raycast(transform.position, pDirection, 0.5f, wallMask);
-        Debug.DrawRay(transform.position, pDirection * 0.5f, Color.red);
-        Debug.Log("RayCast hit -> " + hit.collider);
-        //return true;
-        return /*pDirection != Vector2.zero &&*/ //!hit.collider;*/
-        
-        
-        Vector2 posicion1 = (Vector2)transform.position + Vector2.Perpendicular(pDirection) * 0.25f;
-        Vector2 posicion2 = (Vector2)transform.position - Vector2.Perpendicular(pDirection) * 0.25f;
+        Vector2 position1 = (Vector2)transform.position + Vector2.Perpendicular(pDirection) * 0.25f;
+        Vector2 position2 = (Vector2)transform.position - Vector2.Perpendicular(pDirection) * 0.25f;
+        Vector2 position3 = transform.position;
 
         
-        RaycastHit2D hit1 = Physics2D.Raycast(posicion1, pDirection, 0.5f, wallMask);
-        RaycastHit2D hit2 = Physics2D.Raycast(posicion2, pDirection, 0.5f, wallMask);
+        RaycastHit2D hit1 = Physics2D.Raycast(position1, pDirection, 0.5f, wallMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(position2, pDirection, 0.5f, wallMask);
+        RaycastHit2D hit3 = Physics2D.Raycast(position3, pDirection, 0.5f, wallMask);
         
         
-        Debug.DrawRay(posicion1, pDirection * 0.5f, Color.red);
-        Debug.DrawRay(posicion2, pDirection * 0.5f, Color.red);
+        Debug.DrawRay(position1, pDirection * 0.5f, Color.red);
+        Debug.DrawRay(position2, pDirection * 0.5f, Color.red);
+        Debug.DrawRay(position3, pDirection * 0.5f, Color.green);
         
-        return !hit1.collider && !hit2.collider;
+        return !hit1.collider && !hit2.collider && !hit3.collider;
     }
 
     
@@ -149,6 +145,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Coin") || other.CompareTag("BigCoin"))
         {
             gameManager.UpdateScore(100);
+            if (other.CompareTag("BigCoin")) StartCoroutine(ManagePowerUp());
             Destroy(other.gameObject);
         }
         
@@ -156,15 +153,12 @@ public class PlayerController : MonoBehaviour
         {
             if (!_hasPowerUp)
             {
-                /*var enemies = GameObject.FindObjectsOfType<GhostController>();
-                foreach (var e in enemies)
-                {
-                    e.gameObject.SetActive(false);
-                }*/
                 gameManager.UpdateGhostVisibility(false);
                 StartCoroutine(ManagePlayerDeath());
+                return;
             }
-
+            
+            other.gameObject.GetComponent<GhostController>().SetIsDead(true);
         }
     }
 
@@ -184,5 +178,17 @@ public class PlayerController : MonoBehaviour
         transform.position = _initialTransform;
         gameManager.GameOver();
         gameManager.UpdateGhostVisibility(true);
+    }
+
+    IEnumerator ManagePowerUp()
+    {
+        _hasPowerUp = true;
+        yield return new WaitForSeconds(POWER_UP_TIME);
+        _hasPowerUp = false;
+    }
+
+    public bool GetHasPowerUp()
+    {
+        return _hasPowerUp;
     }
 }
