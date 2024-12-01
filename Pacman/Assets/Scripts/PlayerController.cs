@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -11,141 +12,140 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] private float speedForce;
     [SerializeField] private LayerMask wallMask;
-    [SerializeField] private GameObject[] lives;
     [SerializeField] GameManager gameManager;
     private Animator _animator;
     private Rigidbody2D _rb;
     private SpriteRenderer _sr;
-    private float _hMove;
+    private CircleCollider2D _col;
+    private float _hMove = -1;
     private float _vMove;
     private Vector2 _movement;
     private bool _hasPowerUp;
     private Vector3 _initialTransform;
-    private const int POWER_UP_TIME = 10;
+    private bool _isEndInitialMovement;
     
-    // Start is called before the first frame update
+    /// <summary>
+    /// Method Start
+    /// The method Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         _initialTransform = transform.position;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
+        _col = GetComponent<CircleCollider2D>();
         gameManager.StartGame();
+        _sr.flipX = true;
+        StartCoroutine(LaunchInitialMovement());
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Method Update
+    /// This method is called once per frame
+    /// </summary>
     void Update()
     {
         if(gameManager.gameState == GameState.GameOver) Destroy(gameObject);
         
-        if (gameManager.gameState == GameState.InGame)
-        {
-            MoveDirection();
-        }
-        
+        if (gameManager.gameState == GameState.InGame) MoveDirection();
     }
+
     
-    private void MoveDirection() // TODO REFACT THIS METHOD!!
+    /// <summary>
+    /// Method MoveDirection
+    /// This method manages the player moves and animations
+    /// </summary>
+    private void MoveDirection()
     {
+        // Check to end the initial left movement
+        if (!_isEndInitialMovement) return;
+        
         // Get move axes
         _hMove = Input.GetAxis("Horizontal");
         _vMove = Input.GetAxis("Vertical");
+
+        // Avoid diagonal movement. If there any horizontal move -1 or 1 the vertical move is equal to zero 
+        // Preference to horizontal move
+        if (Mathf.Abs(_hMove) > 0) _vMove = 0;
+
+        // Set the normalized directional Vector2. Similar to struct Vector2.left, Vector2.UP...
+        Vector2 direction = new Vector2(_hMove, _vMove).normalized;
         
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            //_rb.velocity = new Vector2(_hMove, 0).normalized * speedForce;
-            _movement = new Vector2(_hMove, 0).normalized * speedForce;
-            if (CheckMovement(Vector2.left))
-            {
-                _sr.flipX = true;
-                _animator.SetBool(IsHmove, true);
-                _animator.SetBool(IsVmove, false);
-                _rb.velocity = _movement;
-            }
-            
-        }
+        // Checking movement. Only move if RayCast hits return true
+        if (!CheckMovement(direction)) return;
+        
+        // Calculate the movement.
+        _movement = direction * speedForce;
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        // Manage animations
+        if (_hMove != 0)
         {
-            /*_rb.velocity =*/ _movement = new Vector2(_hMove, 0).normalized * speedForce;
-            if (CheckMovement(Vector2.right))
-            {
-                _sr.flipX = false;
-                _animator.SetBool(IsHmove, true);
-                _animator.SetBool(IsVmove, false);
-                _rb.velocity = _movement;
-            }
+            _animator.SetBool(IsHmove, true);
+            _animator.SetBool(IsVmove, false);
+            _sr.flipX = _hMove < 0;
+            _rb.velocity = _movement;
         }
-
-        if (Input.GetKey(KeyCode.UpArrow))
+        else if (_vMove != 0)
         {
-            /*_rb.velocity*/ _movement = new Vector2(0,_vMove).normalized * speedForce;
-            if (CheckMovement(Vector2.up))
-            {
-                _animator.SetBool(IsVmove, true);
-                _animator.SetBool(IsHmove, false);
-                _sr.flipY = true;
-                _rb.velocity = _movement;
-            }
+            _animator.SetBool(IsVmove, true);
+            _animator.SetBool(IsHmove, false);
+            _sr.flipY = _vMove > 0;
+            _rb.velocity = _movement;
         }
-
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            /*_rb.velocity*/ _movement = new Vector2(0,_vMove).normalized * speedForce;
-            if (CheckMovement(Vector2.down))
-            {
-                _animator.SetBool(IsVmove, true);
-                _animator.SetBool(IsHmove, false);
-                _sr.flipY = false;
-                _rb.velocity = _movement;
-            }
-        }
-
     }
-
-    private bool CheckMovement(Vector2 pDirection)
+    
+    
+    /// <summary>
+    /// Method CheckMovement
+    /// This method check if the player movement hit with a wall mask or not
+    /// </summary>
+    /// <param name="pDirection">Direction to move the player</param>
+    /// <returns></returns>
+    private bool CheckMovement(Vector2 pDirection) 
     {
-        Vector2 position1 = (Vector2)transform.position + Vector2.Perpendicular(pDirection) * 0.25f;
-        Vector2 position2 = (Vector2)transform.position - Vector2.Perpendicular(pDirection) * 0.25f;
-        Vector2 position3 = transform.position;
-
+        // Calcaulate collider transform + offset to set a raycast position
+        Vector2 colliderCenter = (Vector2)transform.position + _col.offset;
+        Vector2 offset = Vector2.Perpendicular(pDirection).normalized * 0.4f;
         
-        RaycastHit2D hit1 = Physics2D.Raycast(position1, pDirection, 0.5f, wallMask);
-        RaycastHit2D hit2 = Physics2D.Raycast(position2, pDirection, 0.5f, wallMask);
-        RaycastHit2D hit3 = Physics2D.Raycast(position3, pDirection, 0.5f, wallMask);
+        // Build position 
+        Vector2 position1 = colliderCenter + offset;
+        Vector2 position2 = colliderCenter - offset;
+        Vector2 position3 = colliderCenter;
         
+        // Instantiate three raycast hit to detect wall collider (wallMask)
+        RaycastHit2D hit1 = Physics2D.Raycast(position1, pDirection, 1.0f, wallMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(position2, pDirection, 1.0f, wallMask);
+        RaycastHit2D hit3 = Physics2D.Raycast(position3, pDirection, 1.0f, wallMask);
         
-        Debug.DrawRay(position1, pDirection * 0.5f, Color.red);
-        Debug.DrawRay(position2, pDirection * 0.5f, Color.red);
-        Debug.DrawRay(position3, pDirection * 0.5f, Color.green);
+        // [Optional] Draw a ray on scene
+        Debug.DrawRay(position1, pDirection * 1f, Color.red);
+        Debug.DrawRay(position2, pDirection * 1f, Color.red);
+        Debug.DrawRay(position3, pDirection * 1f, Color.green);
         
+        // Manage return hit or not hit with wall mask
         return !hit1.collider && !hit2.collider && !hit3.collider;
     }
-
     
+
+    /// <summary>
+    /// Triggeer OnTriggerEnter2D 
+    /// </summary>
+    /// <param name="other">Trigger gameObject</param>
     private void OnTriggerEnter2D(Collider2D other)
     {
+        
         if (other.CompareTag("MagicDoor"))
         {
-            Vector3 position;
-            if (other.name.Contains("L"))
-            {
-                Debug.Log("left door");
-                position = new Vector3(3.7f, other.transform.position.y, transform.position.z);
-            }
-            else
-            {
-                Debug.Log("right door");
-                position = new Vector3(-3.7f, other.transform.position.y, transform.position.z);
-            }
-            
-            transform.position = position;
+            // Manage a transform position when player arrives to left o right magic door
+            transform.position = new Vector3(other.name.Contains("L") ? 23f : -7f,
+                other.transform.position.y, other.transform.position.z);
         }
-
-        if (other.CompareTag("Coin") || other.CompareTag("BigCoin"))
+        
+        if (other.CompareTag("Pellets") || other.CompareTag("BigPellets"))
         {
             gameManager.UpdateScore(100);
-            if (other.CompareTag("BigCoin")) StartCoroutine(ManagePowerUp());
+            if (other.CompareTag("BigPellets")) StartCoroutine(ManagePowerUp());
             Destroy(other.gameObject);
         }
         
@@ -153,6 +153,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!_hasPowerUp)
             {
+                _rb.velocity = Vector2.zero;
                 gameManager.UpdateGhostVisibility(false);
                 StartCoroutine(ManagePlayerDeath());
                 return;
@@ -161,32 +162,57 @@ public class PlayerController : MonoBehaviour
             other.gameObject.GetComponent<GhostController>().SetIsDead(true);
         }
     }
-
-    /*private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ghost"))
-        {
-            Debug.Log("collisio with Ghost");
-        }
-    }*/
-
+    
+    
+    /// <summary>
+    /// IEnumerator ManagePlayerDeath [Corrutine]
+    /// Manage the player animation state
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ManagePlayerDeath()
     {
         
         _animator.SetTrigger(IsDead);
         yield return new WaitForSeconds(2f);
+        _animator.SetBool(IsHmove, true);
+        _animator.SetBool(IsVmove, false);
         transform.position = _initialTransform;
         gameManager.GameOver();
         gameManager.UpdateGhostVisibility(true);
     }
-
+    
+    
+    /// <summary>
+    /// IEnumerator ManagePowerUp [Corrutine]
+    /// Manage the player powerUp
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ManagePowerUp()
     {
         _hasPowerUp = true;
-        yield return new WaitForSeconds(POWER_UP_TIME);
+        yield return new WaitForSeconds(gameManager.GetPowerUpTime());
         _hasPowerUp = false;
     }
+    
+    
+    /// <summary>
+    /// IEnumerator LaunchInitialMovement [Corrutine]
+    /// Manage the player initial movement
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator LaunchInitialMovement()
+    {
+        yield return new WaitForSeconds(1.0f);
+        _movement = new Vector2(_hMove, 0).normalized * speedForce;
+        _rb.velocity = _movement;
+        _isEndInitialMovement = true;
+    }
 
+    
+    /// <summary>
+    /// Getter GetHasPowerUp
+    /// </summary>
+    /// <returns></returns>
     public bool GetHasPowerUp()
     {
         return _hasPowerUp;

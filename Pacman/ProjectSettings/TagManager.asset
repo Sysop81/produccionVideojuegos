@@ -6,9 +6,9 @@ TagManager:
   tags:
   - Wall
   - MagicDoor
-  - BigCoin
-  - Coin
-  - Direction
+  - Pellets
+  - NoPellets
+  - BigPellets
   - Ghost
   layers:
   - Default
@@ -18,9 +18,9 @@ TagManager:
   - Water
   - UI
   - Wall
-  - Coins
   - Ghost
   - Player
+  - 
   - 
   - 
   - 
