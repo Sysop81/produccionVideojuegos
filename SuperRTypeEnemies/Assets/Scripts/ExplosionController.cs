@@ -6,6 +6,7 @@ public class ExplosionController : MonoBehaviour
 {
     [SerializeField] private float time;
     private float _timer;
+    
     // Start is called before the first frame update
     void Start()
     {

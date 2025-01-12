@@ -9,6 +9,11 @@ TagManager:
   - playerLimit
   - RockBase
   - Explosion
+  - DeathZone
+  - Alien
+  - BaseZone
+  - RedSpaceShip
+  - Shoot
   layers:
   - Default
   - TransparentFX

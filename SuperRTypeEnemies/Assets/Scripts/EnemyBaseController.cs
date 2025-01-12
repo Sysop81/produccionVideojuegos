@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using static UnityEditor.Tools;
 
 
 //using Random = Unity.Mathematics.Random;
@@ -46,22 +47,22 @@ public class EnemyBaseController : MonoBehaviour
             _life -= value;
             return;
         }
+        
         // This base is destroyed by player
         _animator.SetBool(IsDestroy,true);
         
         
         for (int i = 0; i < 6; i++)
         {
-            Instantiate(explosion, GetAleatoryTranformPosition(), Quaternion.identity);
+            Instantiate(explosion, Tools.GetAleatoryTranformPosition(transform.position), Quaternion.identity);
         }
     }
-    
-    private Vector3 GetAleatoryTranformPosition()
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        var offset = 0.5f;
-        var x = Random.Range(transform.position.x -offset, transform.position.x + offset);
-        var y = Random.Range(transform.position.y -offset, transform.position.y + offset);
-        
-        return new Vector3(x,y,transform.position.z);
+        if (other.CompareTag("BaseZone"))
+        {
+            ManageDoor(true);
+        }
     }
 }
