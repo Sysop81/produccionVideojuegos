@@ -10,6 +10,7 @@ using static UnityEditor.Tools;
 
 public class EnemyBaseController : MonoBehaviour
 {
+    [SerializeField] private GameObject baseSpawner;
     [SerializeField] private GameObject explosion;
     private static readonly int IsOpen = Animator.StringToHash("isOpen");
     private static readonly int IsDestroy = Animator.StringToHash("isDestroyed");
@@ -38,6 +39,9 @@ public class EnemyBaseController : MonoBehaviour
     void ManageDoor(bool value)
     {
         _animator.SetBool(IsOpen, value);
+
+        if (value) StartCoroutine(LaunchEnemies());
+
     }
 
     public void UpdateLife(int value)
@@ -56,6 +60,13 @@ public class EnemyBaseController : MonoBehaviour
         {
             Instantiate(explosion, Tools.GetAleatoryTranformPosition(transform.position), Quaternion.identity);
         }
+    }
+
+    IEnumerator LaunchEnemies()
+    {
+        baseSpawner.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        ManageDoor(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -11,7 +11,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int enemieWave;
     [SerializeField] private int numOfWaves;
 
-    private Vector3[] waveGroupsMoves = {Vector3.down, Vector3.up,Vector3.up,Vector3.down,Vector3.down, Vector3.up, Vector3.down,Vector3.down};
+    private Vector3[] _waveGroupsMoves = {Vector3.down, Vector3.up,Vector3.up,Vector3.down,Vector3.down, Vector3.up, Vector3.down,Vector3.down};
 
     private bool _isLowerShip;
     private float _iSpawnXPos;
@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
             var ePrefab = Instantiate(_enemyPrefab, GetSpawnPosition(transform.position, i != 0 && i != 5), Quaternion.identity);
             
             if(ePrefab.gameObject.name.Contains("ship"))
-                ePrefab.gameObject.GetComponent<EnemyController>().SetVerticalMove(waveGroupsMoves[i]);
+                ePrefab.gameObject.GetComponent<EnemyController>().SetVerticalMove(_waveGroupsMoves[i]);
         }
 
         _launchedWaves++;

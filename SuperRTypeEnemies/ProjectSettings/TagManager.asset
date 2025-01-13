@@ -14,6 +14,7 @@ TagManager:
   - BaseZone
   - RedSpaceShip
   - Shoot
+  - wp
   layers:
   - Default
   - TransparentFX
