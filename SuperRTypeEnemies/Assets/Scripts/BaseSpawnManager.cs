@@ -18,6 +18,7 @@ public class BaseSpawnManager : MonoBehaviour
 
     private void LaunchEnemyWave()
     {
+        bool isDown = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
         var offSet = 2f;
         var yPos = transform.position.y - offSet;
         for (int i = 0; i < enemieWave; i++)
@@ -25,8 +26,10 @@ public class BaseSpawnManager : MonoBehaviour
             
             var shipPrefab =Instantiate(whiteShipPrefab, 
                     new Vector3(transform.position.x, yPos,1), Quaternion.identity);
-            shipPrefab.GetComponent<EnemyController3>().SetVerticalMove(_waveMoves[i]);
-            yPos -= offSet;
+            shipPrefab.GetComponent<EnemyController3>().SetVerticalMove(_waveMoves[i], isDown);
+            //yPos -= offSet;
+            if (isDown) yPos += offSet;
+            else yPos -= offSet;
         }
     }
 }
