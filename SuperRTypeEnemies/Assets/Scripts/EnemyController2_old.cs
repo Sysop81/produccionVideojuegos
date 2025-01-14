@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemyController2 : MonoBehaviour
+public class EnemyController2_old : MonoBehaviour
 {
     [SerializeField] private Transform playerTransform;
     [SerializeField] private float forwardSpeed = 1.0f;

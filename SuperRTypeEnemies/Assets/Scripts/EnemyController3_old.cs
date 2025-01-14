@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemyController3 : MonoBehaviour
+public class EnemyController3_old : MonoBehaviour
 {
     
     [SerializeField] private float forwardSpeed = 4.0f;
@@ -16,7 +16,6 @@ public class EnemyController3 : MonoBehaviour
     private bool _isMirrorMovement = false;
     
     
-    // TODO -> Hide the ship ON initial and render later
     
     
     // Start is called before the first frame update
@@ -49,6 +48,13 @@ public class EnemyController3 : MonoBehaviour
         _sp.flipY = isDown;
         _isMirrorMovement = isDown;
         if(isDown) _direction = Vector3.down;
+    }
+
+    public void SetInverseMove(bool isInverseMovement = false)
+    {
+        _sp.flipY = isInverseMovement;
+        _isMirrorMovement = isInverseMovement;
+        if(isInverseMovement) _direction = Vector3.down;
     }
     
     void MoveVertical()

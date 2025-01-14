@@ -1,47 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour
 {
     
-    [SerializeField] private float forwardSpeed = 5.0f;
-    private float _verticalSpeed = 2.0f;
-    private Vector3 _hDirection = Vector3.zero;
     private GameObject _explosion;
+    protected float ForwardSpeed { get; set; }
+    protected Vector3 Direction { get; set; }
+    protected SpriteRenderer SpriteRenderer { get; set; }
     
-    // Start is called before the first frame update
-    void Start()
+    
+    protected void Intialize()
     {
         _explosion = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(obj => obj.name == "Explosion");
-        InvokeRepeating("MoveVertical",0f,0.3f);
     }
-
-    void MoveVertical()
-    {
-        
-        //transform.Translate( _verticalSpeed * _hDirection);
-
-        _hDirection = _hDirection == Vector3.up ? Vector3.down : Vector3.up;
-    }
-
-    public void SetVerticalMove(Vector3 vMove)
-    {
-        _hDirection = vMove;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        transform.Translate( forwardSpeed * Time.deltaTime * Vector2.left);
-        transform.Translate( _verticalSpeed * Time.deltaTime * _hDirection);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
+    
+    
+    protected void OnTriggerEnter2D(Collider2D other)
     {
         if(other.CompareTag("DeathZone")) Destroy(gameObject);
-
+        
         if (other.CompareTag("Shoot"))
         {
             for (int i = 0; i < 4; i++)

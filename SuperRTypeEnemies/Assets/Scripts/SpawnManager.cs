@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
             var ePrefab = Instantiate(_enemyPrefab, GetSpawnPosition(transform.position, i != 0 && i != 5), Quaternion.identity);
             
             if(ePrefab.gameObject.name.Contains("ship"))
-                ePrefab.gameObject.GetComponent<EnemyController>().SetVerticalMove(_waveGroupsMoves[i]);
+                ePrefab.gameObject.GetComponent</*EnemyController*/ EnemyRedShipController>().SetVerticalMove(_waveGroupsMoves[i]);
         }
 
         _launchedWaves++;

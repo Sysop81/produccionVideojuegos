@@ -7,29 +7,29 @@ public class BaseSpawnManager : MonoBehaviour
     
     [SerializeField] private GameObject whiteShipPrefab;
     [SerializeField] private int enemieWave;
-    
-    private Vector3[] _waveMoves = {Vector3.down, Vector3.up,Vector3.down,Vector3.up,Vector3.down, Vector3.up};
+
+    private bool _isInverseBase;
+    private int _enemieCounter;
     
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("LaunchEnemyWave", 0f);
+        _enemieCounter = 0;
+        _isInverseBase = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
+        
+        InvokeRepeating("LaunchEnemy",0f,0.3f);
     }
+    
 
-    private void LaunchEnemyWave()
+    private void LaunchEnemy()
     {
-        bool isDown = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
-        var offSet = 2f;
-        var yPos = transform.position.y - offSet;
-        for (int i = 0; i < enemieWave; i++)
-        {
-            
-            var shipPrefab =Instantiate(whiteShipPrefab, 
-                    new Vector3(transform.position.x, yPos,1), Quaternion.identity);
-            shipPrefab.GetComponent<EnemyController3>().SetVerticalMove(_waveMoves[i], isDown);
-            //yPos -= offSet;
-            if (isDown) yPos += offSet;
-            else yPos -= offSet;
-        }
+        var shipPrefab =Instantiate(whiteShipPrefab, 
+            new Vector3(transform.position.x, transform.position.y,1), Quaternion.identity);
+        
+        shipPrefab.GetComponent<EnemyWhiteShipController>().SetInverseMove(_isInverseBase);
+
+        _enemieCounter++;
+        
+        if(_enemieCounter == enemieWave) CancelInvoke("LaunchEnemy");
     }
 }
