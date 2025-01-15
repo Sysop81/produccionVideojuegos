@@ -17,7 +17,7 @@ public class BaseSpawnManager : MonoBehaviour
         _enemieCounter = 0;
         _isInverseBase = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
         
-        InvokeRepeating("LaunchEnemy",0f,0.3f);
+        InvokeRepeating("LaunchEnemy",0f,0.4f);
     }
     
 

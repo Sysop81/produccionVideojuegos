@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
             var ePrefab = Instantiate(_enemyPrefab, GetSpawnPosition(transform.position, i != 0 && i != 5), Quaternion.identity);
             
             if(ePrefab.gameObject.name.Contains("ship"))
-                ePrefab.gameObject.GetComponent</*EnemyController*/ EnemyRedShipController>().SetVerticalMove(_waveGroupsMoves[i]);
+                ePrefab.gameObject.GetComponent<EnemyRedShipController>().SetVerticalMove(_waveGroupsMoves[i]);
         }
 
         _launchedWaves++;
@@ -81,7 +81,7 @@ public class SpawnManager : MonoBehaviour
 
         if (!other.name.Contains("WP")) return;
 
-        var repeatRate = 3f;
+        var repeatRate = 6f;
         
         if(other.gameObject.name.Equals("WPAlienSpawn"))
         {

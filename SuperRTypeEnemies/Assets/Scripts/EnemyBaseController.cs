@@ -8,22 +8,24 @@ using static UnityEditor.Tools;
 
 //using Random = Unity.Mathematics.Random;
 
-public class EnemyBaseController : MonoBehaviour
+public class EnemyBaseController : EnemyController
 {
     [SerializeField] private GameObject baseSpawner;
-    [SerializeField] private GameObject explosion;
     private static readonly int IsOpen = Animator.StringToHash("isOpen");
     private static readonly int IsDestroy = Animator.StringToHash("isDestroyed");
     
-    private GameObject _player;
     private bool _isActive;
     private Animator _animator;
     private int _life = 5;
-    
+
+    void Awake()
+    {
+        Intialize();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Player");
         _animator = GetComponent<Animator>();
     }
 
@@ -55,11 +57,7 @@ public class EnemyBaseController : MonoBehaviour
         // This base is destroyed by player
         _animator.SetBool(IsDestroy,true);
         
-        
-        for (int i = 0; i < 6; i++)
-        {
-            Instantiate(explosion, Tools.GetAleatoryTranformPosition(transform.position), Quaternion.identity);
-        }
+        LaunchExplosion(6);
     }
 
     IEnumerator LaunchEnemies()
@@ -69,7 +67,7 @@ public class EnemyBaseController : MonoBehaviour
         ManageDoor(false);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    new private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("BaseZone"))
         {

@@ -16,20 +16,25 @@ public class EnemyController : MonoBehaviour
     
     protected void Intialize()
     {
-        _explosion = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(obj => obj.name == "Explosion");
+        _explosion = Resources.Load("Prefabs/Explosion") as GameObject;
     }
-    
-    
+
+    protected void LaunchExplosion(int numOfExplosions = 4)
+    {
+        for (int i = 0; i < numOfExplosions; i++)
+        {
+            Instantiate(_explosion, Tools.GetAleatoryTranformPosition(transform.position,Random.Range(0.5f,1f)), Quaternion.identity);
+        }
+    }
+
+
     protected void OnTriggerEnter2D(Collider2D other)
     {
         if(other.CompareTag("DeathZone")) Destroy(gameObject);
         
         if (other.CompareTag("Shoot"))
         {
-            for (int i = 0; i < 4; i++)
-            {
-                Instantiate(_explosion, Tools.GetAleatoryTranformPosition(transform.position,Random.Range(0.5f,1f)), Quaternion.identity);
-            }
+            LaunchExplosion();
             Destroy(other.gameObject);
             Destroy(gameObject);
         }
