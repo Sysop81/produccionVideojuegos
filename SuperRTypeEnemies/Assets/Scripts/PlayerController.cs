@@ -13,9 +13,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject[] shoots;
     [SerializeField] private GameObject shootLoad;
     [SerializeField] private GameObject mainCamera;
-    
+    [SerializeField] private GameObject explosion;
     private float _hMove;
     private float _vMove;
+    private SpriteRenderer _sr;
     private Animator _animator;
     private Rigidbody2D _rb;
     private const float _SHOOT_TIME = 1f;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private const float _X_LIMIT_OFFSET = 0.7f;
     private const float _Y_LIMIT_OFFSET = 0.4f;
     private bool _isShootLoadActive;
+    private bool _isDead;
     
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour
         speedForce = 6.0f;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
+        _sr = GetComponent<SpriteRenderer>();
 
         _cameraScript = mainCamera.GetComponent<CameraController>();
         _camera = mainCamera.GetComponent<Camera>();
@@ -48,7 +51,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // Atomotic player move
+            // Atomatic player move
             MoveXplayerAuto(_cameraScript.GetForwardSpeed());
         }
         
@@ -96,6 +99,8 @@ public class PlayerController : MonoBehaviour
 
     private void MoveXplayerAuto(float xSpeed)
     {
+        _animator.SetBool(IsUp, false);
+        _animator.SetBool(IsDown, false);
         _rb.velocity = new Vector2(1, 0).normalized * xSpeed; 
     }
     
@@ -152,21 +157,29 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         
-       if (other.gameObject.CompareTag("LimitZone"))
+       if (other.gameObject.CompareTag("LimitZone")) ManageGameOver();
+       
+       if (!_isDead && (other.gameObject.CompareTag("RockBase") || other.gameObject.CompareTag("Enemy")))
        {
-           Time.timeScale = 0;
-           Debug.Log("¡¡¡ End Game !!!");
+           _isDead = true;
+           Destroy(other.gameObject);
+           //Tools.DrawExplosion(explosion,transform.position,6);
+           ExplosionController.DrawExplosion(explosion,transform.position,6);
+           _sr.enabled = false;
+           Invoke("ManageGameOver", 1f);
        }
     }
     
-    private void OnCollisionEnter2D(Collision2D other)
+    /// <summary>
+    /// method ManageGameOver
+    /// This method is calling when player get the level limit or when the player is dead
+    /// </summary>
+    private void ManageGameOver()
     {
-        /*if (other.gameObject.CompareTag("RockBase"))
-        {
-            Destroy(gameObject);
-        }*/
+        Time.timeScale = 0;
+        Debug.Log("¡¡¡ End Game !!!");
     }
-    
+
     /// <summary>
     /// Method CheckLimits
     /// This method checks the player limits

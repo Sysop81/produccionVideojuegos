@@ -596,6 +596,7 @@ MonoBehaviour:
   - {fileID: 679653212809716358, guid: 3d13d758f0d46e847a99f9b16cbfd1da, type: 3}
   shootLoad: {fileID: 958772923}
   mainCamera: {fileID: 519420028}
+  explosion: {fileID: 1313997214859957615, guid: fa022cd68e18c3f48bf22d6757401aff, type: 3}
 --- !u!4 &245538398
 Transform:
   m_ObjectHideFlags: 0
@@ -812,8 +813,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec76af2fe261dc64e9e0345d40a003dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteShipPrefab: {fileID: 859701706199867413, guid: 9cc8050f1ed4b184e96fb177a76a0b35, type: 3}
-  enemieWave: 6
 --- !u!1 &472115222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1748,8 +1747,6 @@ MonoBehaviour:
   enemies:
   - {fileID: 456519279111884692, guid: f693361bea1f99d43a846d8d3de0d45c, type: 3}
   - {fileID: 2858375244317566657, guid: 97cdc7115a579654e8ca983b9803d84d, type: 3}
-  enemieWave: 8
-  numOfWaves: 3
 --- !u!61 &985405215
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1916,8 +1913,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec76af2fe261dc64e9e0345d40a003dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteShipPrefab: {fileID: 859701706199867413, guid: 9cc8050f1ed4b184e96fb177a76a0b35, type: 3}
-  enemieWave: 6
 --- !u!1 &1186455682
 GameObject:
   m_ObjectHideFlags: 0
@@ -2039,8 +2034,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec76af2fe261dc64e9e0345d40a003dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteShipPrefab: {fileID: 859701706199867413, guid: 9cc8050f1ed4b184e96fb177a76a0b35, type: 3}
-  enemieWave: 6
 --- !u!1 &1338185504
 GameObject:
   m_ObjectHideFlags: 0
@@ -2288,8 +2281,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec76af2fe261dc64e9e0345d40a003dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteShipPrefab: {fileID: 859701706199867413, guid: 9cc8050f1ed4b184e96fb177a76a0b35, type: 3}
-  enemieWave: 6
 --- !u!1 &1566892031
 GameObject:
   m_ObjectHideFlags: 0
@@ -3004,7 +2995,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.02507617}

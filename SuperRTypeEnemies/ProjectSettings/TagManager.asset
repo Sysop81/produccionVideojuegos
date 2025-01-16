@@ -15,6 +15,7 @@ TagManager:
   - RedSpaceShip
   - Shoot
   - wp
+  - Enemy
   layers:
   - Default
   - TransparentFX

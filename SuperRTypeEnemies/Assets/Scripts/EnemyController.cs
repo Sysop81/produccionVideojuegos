@@ -21,10 +21,8 @@ public class EnemyController : MonoBehaviour
 
     protected void LaunchExplosion(int numOfExplosions = 4)
     {
-        for (int i = 0; i < numOfExplosions; i++)
-        {
-            Instantiate(_explosion, Tools.GetAleatoryTranformPosition(transform.position,Random.Range(0.5f,1f)), Quaternion.identity);
-        }
+        //Tools.DrawExplosion(_explosion,transform.position,numOfExplosions);
+        ExplosionController.DrawExplosion(_explosion,transform.position,numOfExplosions);
     }
 
 
