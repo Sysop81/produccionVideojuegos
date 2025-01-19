@@ -8,7 +8,7 @@ public class EnemyWhiteShipController : EnemyController
     private bool _isMirrorMovement;
     
     /// <summary>
-    /// Method Awake
+    /// Method Awake [Life cycle]
     /// </summary>
     void Awake()
     {
@@ -18,7 +18,7 @@ public class EnemyWhiteShipController : EnemyController
     }
 
     /// <summary>
-    /// Method Start
+    /// Method Start [Life cycle]
     /// Start is called before the first frame update
     /// </summary>
     void Start()

@@ -3,62 +3,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManagerEnemyBase : SpawnManager/*MonoBehaviour*/
+public class SpawnManagerEnemyBase : SpawnManager
 {
-    private bool _isInverseBase;
-
+    [SerializeField] private GameObject prefabEnemy;
+    [SerializeField] private int enemiesByWave;
+    [SerializeField] private float repeatTime;
+    private bool _isInverse;
+    
+    /// <summary>
+    /// Method Awake [Life cycle]
+    /// </summary>
     private void Awake()
     {
-        EnemyPrefab = Resources.Load("Prefabs/WhiteSpaceship") as GameObject;
+        // Load a parent properties
+        EnemyPrefab = prefabEnemy; 
     }
-
+    
+    /// <summary>
+    /// Method Start [Life cycle]
+    /// </summary>
     private void Start()
     {
+        // Load parent and local properties
         EnemyWave = 6;
         EnemyCounter = 0;
-        RepeatWaveTime = 0.4f;
-        _isInverseBase = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
+        RepeatWaveTime = repeatTime; 
+        _isInverse = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0; // Determinies the upper or down spawn position
         
-        InvokeRepeating("LaunchEnemies",0f, RepeatWaveTime);
-    }
-
-    /*[SerializeField] private GameObject whiteShipPrefab;
-    [SerializeField] private int enemieWave;
-
-    private bool _isInverseBase;
-    private int _enemieCounter;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        _enemieCounter = 0;
-        _isInverseBase = int.Parse(gameObject.name.Split('_')[1]) % 2 == 0;
-        
-        InvokeRepeating("LaunchEnemy",0f,0.4f);
+        // Launch the repeating method invouke
+        InvokeRepeating(nameof(LaunchEnemies),0f, RepeatWaveTime);
     }
     
-
-    private void LaunchEnemy()
-    {
-        var shipPrefab =Instantiate(whiteShipPrefab, 
-            new Vector3(transform.position.x, transform.position.y,1), Quaternion.identity);
-        
-        shipPrefab.GetComponent<EnemyWhiteShipController>().SetInverseMove(_isInverseBase);
-
-        _enemieCounter++;
-        
-        if(_enemieCounter == enemieWave) CancelInvoke("LaunchEnemy");
-    }*/
+    /// <summary>
+    /// Method LaunchEnemies
+    /// This method manages the spawn behavior
+    /// </summary>
     protected override void LaunchEnemies()
     {
-        var shipPrefab =Instantiate(EnemyPrefab, 
+        // Instantia the prefab
+        var prefab =Instantiate(EnemyPrefab, 
             new Vector3(transform.position.x, transform.position.y,1), Quaternion.identity);
+        // Set value into inherited property            
+        prefab.GetComponent<EnemyController>().Direction = !_isInverse ? Vector3.down : Vector3.up;
         
-        shipPrefab.GetComponent<EnemyWhiteShipController>().SetInverseMove(_isInverseBase);
-
+        // Manages the white ship enemy behavior
+        try
+        {
+            prefab.GetComponent<EnemyWhiteShipController>().SetInverseMove(_isInverse);
+        }catch { /* Isn't a White Ship prefab */ }
+        
+        // Increment the enemy counter
         EnemyCounter++;
-
-        if (EnemyCounter == EnemyWave) CancelInvoke("LaunchEnemies");
-        
+        // Manage the cancel invoke when counter reach the limit of enemy wave   
+        if (EnemyCounter == EnemyWave) CancelInvoke(nameof(LaunchEnemies));
     }
 }

@@ -9,7 +9,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float forwardSpeed = 5.0f;
     private bool _isMove = true;
 
-    // Update is called once per frame
+    /// <summary>
+    /// Method Update [Lyfe cycle]
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
         if(_isMove)

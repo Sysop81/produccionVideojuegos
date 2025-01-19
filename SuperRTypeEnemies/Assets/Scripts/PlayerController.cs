@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject explosion;
     private float _hMove;
     private float _vMove;
-    private SpriteRenderer _sr;
     private Animator _animator;
     private Rigidbody2D _rb;
     private const float _SHOOT_TIME = 1f;
@@ -29,19 +28,24 @@ public class PlayerController : MonoBehaviour
     private bool _isShootLoadActive;
     private bool _isDead;
     
-    // Start is called before the first frame update
+    /// <summary>
+    /// Method Start [Life cycle]
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         speedForce = 6.0f;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
-        _sr = GetComponent<SpriteRenderer>();
 
         _cameraScript = mainCamera.GetComponent<CameraController>();
         _camera = mainCamera.GetComponent<Camera>();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Method Update [Life cycle]
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
         if (_cameraScript.IsMove())
@@ -96,7 +100,12 @@ public class PlayerController : MonoBehaviour
         // Manage screen camera player limits
         CheckLimits();
     }
-
+    
+    /// <summary>
+    /// Method MoveXplayerAuto
+    /// Manages player and reset animator values
+    /// </summary>
+    /// <param name="xSpeed"></param>
     private void MoveXplayerAuto(float xSpeed)
     {
         _animator.SetBool(IsUp, false);
@@ -159,7 +168,7 @@ public class PlayerController : MonoBehaviour
         
        if (other.gameObject.CompareTag("LimitZone")) ManageGameOver();
        
-       if (!_isDead && (other.gameObject.CompareTag("RockBase") || other.gameObject.CompareTag("Enemy")))
+       /*if (!_isDead && (other.gameObject.CompareTag("RockBase") || other.gameObject.CompareTag("Enemy")))
        {
            _isDead = true;
            Destroy(other.gameObject);
@@ -167,7 +176,7 @@ public class PlayerController : MonoBehaviour
            ExplosionController.DrawExplosion(explosion,transform.position,6);
            _sr.enabled = false;
            Invoke("ManageGameOver", 1f);
-       }
+       }*/
     }
     
     /// <summary>
