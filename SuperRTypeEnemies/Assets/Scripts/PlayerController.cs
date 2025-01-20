@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private float _vMove;
     private Animator _animator;
     private Rigidbody2D _rb;
+    private SpriteRenderer _sr;
     private const float _SHOOT_TIME = 1f;
     private float _time;
     private bool _canUpdateTime;
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour
         speedForce = 6.0f;
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
+        _sr = GetComponent<SpriteRenderer>();
 
         _cameraScript = mainCamera.GetComponent<CameraController>();
         _camera = mainCamera.GetComponent<Camera>();

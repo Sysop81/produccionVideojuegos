@@ -5,9 +5,6 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using static UnityEditor.Tools;
 
-
-//using Random = Unity.Mathematics.Random;
-
 public class EnemyBaseController : EnemyController
 {
     [SerializeField] private GameObject baseSpawner;
@@ -46,7 +43,8 @@ public class EnemyBaseController : EnemyController
     
     /// <summary>
     /// Method ManageDoor
-    /// TODO complete this......
+    /// This method manages the open / close door of the enemy base. When door is open launch the corrutine to instantiate
+    /// enemies
     /// </summary>
     /// <param name="value"></param>
     void ManageDoor(bool value)
@@ -56,25 +54,37 @@ public class EnemyBaseController : EnemyController
         if (value) StartCoroutine(LaunchEnemies());
 
     }
-
-    public void UpdateLife(int value)
+    
+    /// <summary>
+    /// Method UpdateLife
+    /// This method updates (decrease) the enemy base life
+    /// </summary>
+    /// <param name="value"></param>
+    private void UpdateLife(int value)
     {
         if (_life > 0) _life -= value;
     }
-
+    
+    /// <summary>
+    /// IEnumerator LaunchEnemies
+    /// Corrutine to activate the enemy base spawner
+    /// </summary>
+    /// <returns></returns>
     IEnumerator LaunchEnemies()
     {
         baseSpawner.SetActive(true);
         yield return new WaitForSeconds(3.2f);
         ManageDoor(false);
     }
-
+    
+    /// <summary>
+    /// Trigger OnTriggerEnter2D
+    /// </summary>
+    /// <param name="other"></param>
     new private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("BaseZone"))
-        {
-            ManageDoor(true);
-        }
+        // Collider to activate the enemy base door
+        if (other.CompareTag("BaseZone")) ManageDoor(true);
         
         if (other.gameObject.CompareTag("Shoot"))
         {
@@ -84,7 +94,7 @@ public class EnemyBaseController : EnemyController
             {
                 // This base is destroyed by player
                 _animator.SetBool(IsDestroy,true);
-                
+                // Call the parent method to activate the explosions
                 LaunchExplosion(6);
             }
         }

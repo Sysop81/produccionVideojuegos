@@ -25,7 +25,6 @@ public class CameraController : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
         if (other.gameObject.CompareTag("FinishZone"))
         {
             _isMove = false;
