@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
+    private PlayerInput _playerInput;
     
     // Start is called before the first frame update
     void Start()
@@ -32,6 +34,7 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _playerInput = GetComponent<PlayerInput>();
     }
 
     // Update is called once per frame
@@ -51,7 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         
         _animator.SetFloat("jumpVelocity", _rb.velocity.y);
-        if (Input.GetKeyDown(KeyCode.UpArrow) && canJump)
+        if ( _playerInput.actions["Jump"].WasPressedThisFrame() /*Input.GetKeyDown(KeyCode.UpArrow)*/ && canJump)
         {
             _animator.SetBool(IS_WALKING_STR, false);
             _animator.SetBool(IS_JUMPING_STR, true);
@@ -64,7 +67,7 @@ public class PlayerController : MonoBehaviour
     private void MoveDirection()
     {
         // Right, left, wait moves
-        if(Input.GetKey(KeyCode.RightArrow) && canJump)
+        if(_playerInput.actions["DMove"].IsPressed() /*Input.GetKey(KeyCode.RightArrow)*/ && canJump)
         {
             _animator.SetBool(IS_WALKING_STR, true);
             _spriteRenderer.flipX = false;
@@ -76,7 +79,7 @@ public class PlayerController : MonoBehaviour
             }
             _rb.AddForce(new Vector2(xForce * Time.deltaTime, 0.0f));
             
-        }else if (Input.GetKey(KeyCode.LeftArrow) && canJump)
+        }else if (_playerInput.actions["LMove"].IsPressed()/*Input.GetKey(KeyCode.LeftArrow)*/ && canJump)
         {
             _animator.SetBool(IS_WALKING_STR, true);
             _spriteRenderer.flipX = true;
@@ -97,7 +100,7 @@ public class PlayerController : MonoBehaviour
     // Method FireRainBow
     private void FireRainBow()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(_playerInput.actions["Fire"].WasPressedThisFrame()/*Input.GetKeyDown(KeyCode.Space)*/)
         {
             Instantiate(rainBow,
                 new Vector3(transform.position.x +  (_spriteRenderer.flipX ? -RAINBOW_OFFSET : RAINBOW_OFFSET),
