@@ -1,38 +1,94 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BallController : MonoBehaviour
 {
-    [SerializeField] private float xForce;
-    [SerializeField] private float yForce;
+    //[SerializeField] private float xForce;
+    //[SerializeField] private float yForce;
     
-    private Rigidbody2D _rb;
+    //private Rigidbody2D _rb;
+    private SpriteRenderer _spriteRenderer;
+    public Vector3 _initialPosition;
+    public Vector2 _direction;
+    private GameManager _gameManager;
+    private readonly float _speed = 8.0f;
+    private readonly float _playerSpeedMultiplier = 3.0f;
+    public bool _isResetBall;
+    
+    
     
     // Start is called before the first frame update
     void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteRenderer.enabled = false;
+        _initialPosition = transform.position;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //_rb = GetComponent<Rigidbody2D>();
+        //_direction = new Vector2(Random.Range(-1f, 1f), 1f).normalized;
+        ManageSpawnDirection(true);
+
+        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 200 * _direction, ForceMode2D.Force);
     }
 
     // Update is called once per frame
     void Update()
     {
-        _rb.AddForce(new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime), ForceMode2D.Force);
+        if(_gameManager.gameState == GameState.Loading || _isResetBall) return;
+        if(!_spriteRenderer.enabled) _spriteRenderer.enabled = true;
+        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 50 * Time.deltaTime  * _direction);
+        transform.Translate( _speed * Time.deltaTime * _direction);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Upper Limit"))
+        if (collision.gameObject.CompareTag("Upper Limit") || collision.gameObject.CompareTag("Lower Limit"))
         {
-            yForce = yForce * -1;
+            _direction = new Vector2(_direction.x, -_direction.y).normalized;
         }
 
-        if (collision.gameObject.CompareTag("Lower Limit"))
+        if (collision.gameObject.CompareTag("Left Limit") || collision.gameObject.CompareTag("Right Limit"))
         {
-            yForce = yForce * 1;
+            //_direction = new Vector2(-_direction.x, _direction.y).normalized;
+            StartCoroutine(ResetBall());
+            _gameManager.UpdateScore(1,collision.gameObject.CompareTag("Left Limit"));
+            
+            
         }
+        
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            _direction = new Vector2(-_direction.x * _playerSpeedMultiplier, _direction.y).normalized;
+        }
+
+        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 200 * _direction, ForceMode2D.Force);
     }
+
+
+    IEnumerator ResetBall()
+    {
+        _isResetBall = true;
+        //_spriteRenderer.enabled = false;
+        transform.position = _initialPosition;
+        yield return new WaitForSeconds(1.0f);
+        //_direction = new Vector2(Random.Range(-0.5f, 0.5f), -0.5f).normalized;
+        ManageSpawnDirection();
+        //_spriteRenderer.enabled = true;
+        _isResetBall = false;
+    }
+
+    private void ManageSpawnDirection(bool isFirstLoad = false)
+    {
+
+        bool isLeftSide = Random.Range(1, 101) % 2 == 0;
+        var xValue  = Random.Range(0.5f, 1.0f);
+        var yValue = isFirstLoad ? 1.0f : Random.Range(-1f, -0.1f);
+        _direction = new Vector2(isLeftSide ? -xValue : xValue/*Random.Range(-1f, 1f)*/, /*Random.Range(-1f, -0.1f)*/ yValue).normalized;
+    }
+    
+    
     
     
 }

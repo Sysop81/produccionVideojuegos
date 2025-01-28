@@ -7,6 +7,8 @@ TagManager:
   - Upper Limit
   - Lower Limit
   - Ball
+  - Left Limit
+  - Right Limit
   layers:
   - Default
   - TransparentFX

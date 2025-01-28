@@ -10,13 +10,17 @@ public class PlayerController : MonoBehaviour
     private PlayerInput _playerInput;
     private Rigidbody2D _rigidbody2D;
     private float _xOffset = 4.0f;
+    private GameManager _gameManager;
     
     // Start is called before the first frame update
     void Start()
     {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _playerInput = GetComponent<PlayerInput>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        transform.position = new Vector3((_playerInput.user.id == 1 ? -_xOffset : _xOffset), transform.position.y, transform.position.z);
+        var playerId = _playerInput.user.id; 
+        transform.position = new Vector3((/*_playerInput.user.id*/playerId == 1 ? -_xOffset : _xOffset), transform.position.y, transform.position.z);
+        _gameManager.SetPlayerActive(true, playerId == 1);
     }
 
     // Update is called once per frame
@@ -40,11 +44,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            //if (collision.gameObject.transform.position.x < 0)
+            
         }
-    }
+    }*/
 }
