@@ -25,10 +25,13 @@ public class GameManager : MonoBehaviour
     
     public bool _isP1Active;
     public bool _isP2Active;
+
+    private BallController _ball;
     
     // Start is called before the first frame update
     void Start()
     {
+        _ball = FindObjectOfType<BallController>();
         _p1Score = 0;
         _p2Score = 0;
     }
@@ -36,7 +39,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(_isP1Active && _isP2Active) gameState = GameState.InGame;
+        if (_isP1Active && _isP2Active) gameState = GameState.InGame;
     }
     
     /// <summary>
@@ -68,5 +71,7 @@ public class GameManager : MonoBehaviour
         
         _isP2Active = value;
         waitingTextP2.gameObject.SetActive(false);
+        
+        if(_isP1Active && _isP2Active) _ball.InitializeBall();
     }
 }
