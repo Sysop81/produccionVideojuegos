@@ -6,125 +6,140 @@ using UnityEngine.UIElements;
 
 public class BallController : MonoBehaviour
 {
-    //[SerializeField] private float xForce;
-    //[SerializeField] private float yForce;
     
     private Rigidbody2D _rb;
     private SpriteRenderer _spriteRenderer;
-    public Vector3 _initialPosition;
-    public Vector2 _direction;
+    private Vector3 _initialPosition;
+    private Vector2 _direction;
     private GameManager _gameManager;
     private readonly float _speed = 8.0f;
-    private readonly float _playerSpeedMultiplier = 3.0f;
-    public bool _isResetBall;
+    private readonly float _speedImpulse = 1.1f;
+    private readonly float MAX_SPEED = 10.0f;
+    private bool _isImpulseMode = true; // Default value
     
     
-    
-    // Start is called before the first frame update
+    /// <summary>
+    /// Method Start
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
+        _initialPosition = transform.position;
+        _rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.enabled = false;
-        _initialPosition = transform.position;
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        _rb = GetComponent<Rigidbody2D>();
-        //_direction = new Vector2(Random.Range(-1f, 1f), 1f).normalized;
-        ManageSpawnDirection(true);
-
-        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 200 * _direction, ForceMode2D.Force);
         
-        //_rb.AddForce(_direction * _speed, ForceMode2D.Impulse);
+        // Get initial randon direction
+        ManageSpawnDirection(true);
     }
 
-    public void InitializeBall()
-    {
-        //_rb.AddForce(_direction * _speed, ForceMode2D.Impulse);
-        _rb.velocity = _direction * _speed;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(_gameManager.gameState == GameState.Loading || _isResetBall) return;
-        if(!_spriteRenderer.enabled) _spriteRenderer.enabled = true;
-        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 50 * Time.deltaTime  * _direction);
-        //transform.Translate( _speed * Time.deltaTime * _direction);
-    }
-
+    
+    /// <summary>
+    /// Trigger OnCollisionEnter2D
+    /// </summary>
+    /// <param name="collision">Collision gameObject</param>
     void OnCollisionEnter2D(Collision2D collision)
     {
-        /*if (collision.gameObject.CompareTag("Upper Limit") || collision.gameObject.CompareTag("Lower Limit"))
-        {
-            _direction = new Vector2(_direction.x, -_direction.y).normalized;
-        }*/
-
+        // Handle left and right collision sides
         if (collision.gameObject.CompareTag("Left Limit") || collision.gameObject.CompareTag("Right Limit"))
         {
-            //_direction = new Vector2(-_direction.x, _direction.y).normalized;
+            // Reset the ball and update the game marker
             StartCoroutine(ResetBall());
             _gameManager.UpdateScore(1,collision.gameObject.CompareTag("Left Limit"));
         }
         
+        // Player collision
         if (collision.gameObject.CompareTag("Player"))
         {
-            var pRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            Debug.Log("Player Y velocity --> " + pRb.velocity.y);
-            var yForce = 2.0f;
-            
-            if (pRb.velocity.y < 0)
+            // 1º Simulated mode
+            if (_isImpulseMode)
             {
-                Debug.Log("Player velocity negativa");
-                yForce = -_direction.y; // * -2.0f;
-            }else if (pRb.velocity.y > 0)
-            {
-                Debug.Log("Player velocity positiva");
-                yForce = _direction.y; //* 2.0f;
+                ManageBall();
+                return;
             }
-            else
-            {
-                Debug.Log("Player velocity neutro");
-                yForce = _direction.y; //0.0f;
-            }
-
-            var pId = collision.gameObject.GetComponent<PlayerInput>().user.id;
-            var dirX = Mathf.Abs(_direction.x); //* 10f;  // pId == 1 ? _direction.x * 10f : -_direction.x * 10f;
-            //Debug.Log("**** DIRECCION ---> " + (pId == 1 ? dirX : -dirX) + " player --> " + pId);
-            //Debug.Log(Mathf.Abs(_direction.x));
-            //_rb.velocity = new Vector2( (pId == 1 ? dirX : -dirX), yForce) * 10f;
-            _rb.AddForce(-_direction);
-            //_direction = new Vector2(-_direction.x * _playerSpeedMultiplier, yForce/*_direction.y*/).normalized;*/
-            //_rb.AddForce(new Vector2(- (_direction.x * _playerSpeedMultiplier), yForce/*_direction.y*/) , ForceMode2D.Impulse);
+            // 2º Arcade mode
+            ManageBall(collision, collision.gameObject.GetComponent<PlayerInput>().user.id == 1 ? 1 : -1);
         }
-
-        //_rb.AddForce(/*new Vector2(xForce * Time.deltaTime, yForce * Time.deltaTime)*/ 200 * _direction, ForceMode2D.Force);
     }
-
-
-    IEnumerator ResetBall()
+    
+    /// <summary>
+    /// Method ManageBall [Simulated]
+    /// This method apply impulse force to the rigidbody and set a max speed control
+    /// </summary>
+    private void ManageBall()
+    {
+        _rb.AddForce(_direction,ForceMode2D.Impulse);
+        _rb.velocity *= _speedImpulse;
+            
+        if (_rb.velocity.magnitude > MAX_SPEED)
+            _rb.velocity = _rb.velocity.normalized * MAX_SPEED;
+    }
+    
+    /// <summary>
+    /// Method ManageBall [Arcade]
+    /// This method applies a fixed force to the ball. Change the direction of the x axis to the one received as a
+    /// parameter and adjust the y axis depending on where the ball hit the player.
+    /// </summary>
+    /// <param name="player">player gameObject</param>
+    /// <param name="x">X axis to apply the new move</param>
+    private void ManageBall(Collision2D player, int x)
+    {
+        float yDif = transform.position.y - player.gameObject.transform.position.y;
+        float playerSizeY = player.collider.bounds.size.y;
+        float y = yDif / playerSizeY;
+        _rb.velocity = new Vector2(x, y) * MAX_SPEED;
+    }
+    
+    
+    /// <summary>
+    /// IEnumerator ResetBall [Corrutine]
+    /// This corrutine handle the reset of the ball
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator ResetBall()
     {
         _rb.velocity = Vector2.zero;
-        _isResetBall = true;
-        //_spriteRenderer.enabled = false;
         transform.position = _initialPosition;
         yield return new WaitForSeconds(1.0f);
-        //_direction = new Vector2(Random.Range(-0.5f, 0.5f), -0.5f).normalized;
         ManageSpawnDirection();
-        //_spriteRenderer.enabled = true;
-        _isResetBall = false;
         InitializeBall();
-        //_rb.AddForce(new Vector2(0,0), ForceMode2D.Force);
     }
-
+    
+    /// <summary>
+    /// Method ManageSpawnDirection
+    /// This method set the randon direction to the ball.
+    /// </summary>
+    /// <param name="isFirstLoad"></param>
     private void ManageSpawnDirection(bool isFirstLoad = false)
     {
-
+        // Handle left or right side ( multiple of 2 --> left side )
         bool isLeftSide = Random.Range(1, 101) % 2 == 0;
+        
+        // Get random values
         var xValue  = Random.Range(0.5f, 1.0f);
-        var yValue = isFirstLoad ? 1.0f : Random.Range(-1f, -0.1f);
-        _direction = new Vector2(isLeftSide ? -xValue : xValue/*Random.Range(-1f, 1f)*/, /*Random.Range(-1f, -0.1f)*/ yValue).normalized;
+        var yValue = isFirstLoad ? 0.3f : -0.3f;
+        
+        // Set the Vector2 direction
+        _direction = new Vector2(isLeftSide ? -xValue : xValue,yValue).normalized;
     }
     
+    /// <summary>
+    /// Method InitializeBall
+    /// This method initialize the ball movement
+    /// </summary>
+    public void InitializeBall()
+    {
+        if(!_spriteRenderer.enabled) _spriteRenderer.enabled = true;
+        _rb.velocity = _direction * _speed;
+    }
     
-    
-    
+    /// <summary>
+    /// Setter SetImpulseType
+    /// </summary>
+    /// <param name="isImpulse">Impulse type. Simulaterd or Arcade</param>
+    public void SetImpulseType(bool isImpulse)
+    {
+        _isImpulseMode = isImpulse;
+    }
 }

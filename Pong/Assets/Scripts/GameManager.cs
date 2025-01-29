@@ -1,9 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
-
+using UnityEngine.EventSystems;
 
 public enum GameState
 {
@@ -19,16 +19,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreTextP2;
     [SerializeField] private TextMeshProUGUI waitingTextP1;
     [SerializeField] private TextMeshProUGUI waitingTextP2;
-
+    [SerializeField] private GameObject gameTypePanel;
+    
     private int _p1Score;
     private int _p2Score;
-    
-    public bool _isP1Active;
-    public bool _isP2Active;
-
+    private bool _isP1Active;
+    private bool _isP2Active;
     private BallController _ball;
     
-    // Start is called before the first frame update
+    /// <summary>
+    /// Method Start
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
         _ball = FindObjectOfType<BallController>();
@@ -36,12 +38,26 @@ public class GameManager : MonoBehaviour
         _p2Score = 0;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Method Update
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
+        // Set the game state in geme only when all player are ready
         if (_isP1Active && _isP2Active) gameState = GameState.InGame;
     }
     
+    /// <summary>
+    /// Setter SetGameMode
+    /// Canvas button handler to set the ball game mode. Arcade or simulated
+    /// </summary>
+    public void SetGameMode()
+    {
+        _ball.SetImpulseType(!EventSystem.current.currentSelectedGameObject.name.ToLower().Contains("arcade"));
+        gameTypePanel.SetActive(false);
+    }
+
     /// <summary>
     /// Method UpdateScore
     /// This method updates the score text
@@ -59,7 +75,13 @@ public class GameManager : MonoBehaviour
         _p2Score += value;
         scoreTextP2.text = _p2Score.ToString();
     }
-
+    
+    /// <summary>
+    /// Method SetPlayerActive
+    /// This method handle the players activation and initializes the ball
+    /// </summary>
+    /// <param name="value">Boolean value to set activation flag</param>
+    /// <param name="isP1">Boolean value to indicates the player type</param>
     public void SetPlayerActive(bool value, bool isP1)
     {
         if (isP1)
