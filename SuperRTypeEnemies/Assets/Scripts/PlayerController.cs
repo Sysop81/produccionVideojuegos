@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private const float _Y_LIMIT_OFFSET = 0.4f;
     private bool _isShootLoadActive;
     private bool _isDead;
+    private PlayerInput _playerInput;
     
     /// <summary>
     /// Method Start [Life cycle]
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
+        _playerInput = GetComponent<PlayerInput>();
 
         _cameraScript = mainCamera.GetComponent<CameraController>();
         _camera = mainCamera.GetComponent<Camera>();
@@ -64,6 +67,11 @@ public class PlayerController : MonoBehaviour
         // Shoot
         GenerateShoot();
     }
+
+    public PlayerInput GetPlayerInput()
+    {
+        return _playerInput;
+    }
     
     /// <summary>
     /// Method MoveDirection
@@ -72,14 +80,14 @@ public class PlayerController : MonoBehaviour
     private void MoveDirection()
     {
         // Get move axes
-        _hMove = Input.GetAxis("Horizontal");
-        _vMove = Input.GetAxis("Vertical");
+        _hMove = _playerInput.actions["Horizontal"].ReadValue<float>(); // Input.GetAxis("Horizontal");
+        _vMove = _playerInput.actions["Vertical"].ReadValue<float>();   // Input.GetAxis("Vertical");
         
         // Manage animation
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (_vMove > 0)
         {
             _animator.SetBool(IsUp, true);
-        }else if (Input.GetKey(KeyCode.DownArrow))
+        }else if (_vMove < 0)
         {
             _animator.SetBool(IsDown, true);
         }
@@ -133,12 +141,12 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(_playerInput.actions["Fire"].IsPressed())
         {
             _canUpdateTime = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (_playerInput.actions["Fire"].WasReleasedThisFrame())
         {
 
             if (_isShootLoadActive)
