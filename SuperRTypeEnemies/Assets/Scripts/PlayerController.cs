@@ -30,6 +30,8 @@ public class PlayerController : MonoBehaviour
     private bool _isShootLoadActive;
     private bool _isDead;
     private PlayerInput _playerInput;
+
+    private bool _isOnScreenMovement;
     
     /// <summary>
     /// Method Start [Life cycle]
@@ -83,8 +85,13 @@ public class PlayerController : MonoBehaviour
     private void MoveDirection()
     {
         // Get move axes
-        _hMove = _playerInput.actions["Horizontal"].ReadValue<float>(); // Input.GetAxis("Horizontal");
-        _vMove = _playerInput.actions["Vertical"].ReadValue<float>();   // Input.GetAxis("Vertical");
+        if (!_isOnScreenMovement)
+        {
+            
+            _hMove = _playerInput.actions["Horizontal"].ReadValue<float>(); // Input.GetAxis("Horizontal");
+            _vMove = _playerInput.actions["Vertical"].ReadValue<float>();   // Input.GetAxis("Vertical");
+        }
+        
         
         // Manage animation
         if (_vMove > 0)
@@ -103,7 +110,8 @@ public class PlayerController : MonoBehaviour
         // Change the Rigidbody velocity 
         if (_hMove != 0 || _vMove != 0)
         {
-            _rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
+            //_rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
+            MovePlayer();
         }
         else
         {
@@ -112,6 +120,42 @@ public class PlayerController : MonoBehaviour
         
         // Manage screen camera player limits
         CheckLimits();
+    }
+
+    private void MovePlayer()
+    {
+        _rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
+    }
+
+    public void IsOnScreenMovement(bool value)
+    {
+        _isOnScreenMovement = value;
+    }
+
+
+    public void MoveUpLeft()
+    {
+        _hMove = -1; _vMove = 1;
+        IsOnScreenMovement(true);
+    }
+
+    public void MoveUpRight()
+    {
+        _hMove = 1; _vMove = 1;
+        Debug.Log(" *** mov : " + _hMove + " / " + _vMove);
+        IsOnScreenMovement(true);
+    }
+
+    public void MoveDownLeft()
+    {
+        _hMove = -1; _vMove = -1;
+        IsOnScreenMovement(true);
+    }
+
+    public void MoveDownRight()
+    {
+        _hMove = 1; _vMove = -1;
+        IsOnScreenMovement(true);
     }
     
     /// <summary>
