@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     /// Method Update [Life cycle]
     /// Update is called once per frame
     /// </summary>
-    void Update()
+    void FixedUpdate()
     {
         if (_cameraScript.IsMove())
         {
@@ -63,7 +63,10 @@ public class PlayerController : MonoBehaviour
             // Atomatic player move
             MoveXplayerAuto(_cameraScript.GetForwardSpeed());
         }
-        
+    }
+
+    void Update()
+    {
         // Shoot
         GenerateShoot();
     }

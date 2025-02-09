@@ -32,10 +32,27 @@ public class GameManager : MonoBehaviour
     {
         _padIndex = (_padIndex + 1) % _maxStates;
 
-        switch (_padIndex)
+
+        for (int i = 0; i < canvasGamePad.transform.childCount - 1; i++)
+        {
+            Debug.Log(canvasGamePad.transform.GetChild(i).name);
+            if (_padIndex == 2)
+            {
+                canvasGamePad.transform.GetChild(i).gameObject.SetActive(false);
+            }else
+            {
+                canvasGamePad.transform.GetChild(_padIndex == 0 ? _padIndex + 1 : _padIndex - 1).gameObject.SetActive(false);
+                canvasGamePad.transform.GetChild(_padIndex).gameObject.SetActive(true);
+                if(i > 1) canvasGamePad.transform.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+        
+        
+        
+        /*switch (_padIndex)
         {
             case 0:
-                canvasGamePad.gameObject.SetActive(true);
+                //canvasGamePad.gameObject.SetActive(true);
                 canvasGamePad.transform.GetChild(_padIndex + 1).gameObject.SetActive(false);
                 canvasGamePad.transform.GetChild(_padIndex).gameObject.SetActive(true);
                 break;
@@ -44,8 +61,12 @@ public class GameManager : MonoBehaviour
                 canvasGamePad.transform.GetChild(_padIndex).gameObject.SetActive(true);
                 break;
             default:
-                canvasGamePad.gameObject.SetActive(false);
+                for (int i = 0; i < canvasGamePad.transform.childCount - 1; i++)
+                {
+                    canvasGamePad.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                //canvasGamePad.gameObject.SetActive(false);
                 break;
-        }
+        }*/
     }
 }
