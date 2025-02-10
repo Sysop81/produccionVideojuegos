@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     private bool _isShootLoadActive;
     private bool _isDead;
     private PlayerInput _playerInput;
-
     private bool _isOnScreenMovement;
     
     /// <summary>
@@ -72,11 +71,7 @@ public class PlayerController : MonoBehaviour
         // Shoot
         GenerateShoot();
     }
-
-    public PlayerInput GetPlayerInput()
-    {
-        return _playerInput;
-    }
+    
     
     /// <summary>
     /// Method MoveDirection
@@ -110,7 +105,6 @@ public class PlayerController : MonoBehaviour
         // Change the Rigidbody velocity 
         if (_hMove != 0 || _vMove != 0)
         {
-            //_rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
             MovePlayer();
         }
         else
@@ -121,42 +115,39 @@ public class PlayerController : MonoBehaviour
         // Manage screen camera player limits
         CheckLimits();
     }
-
+    
+    /// <summary>
+    /// Method MovePlayer
+    /// This method move the player on display
+    /// </summary>
     private void MovePlayer()
     {
         _rb.velocity = new Vector2(_hMove, _vMove).normalized * speedForce;
     }
-
+    
+    /// <summary>
+    /// Method IsOnScreenMovement
+    /// This method handle the digital virtual pad buttons release
+    /// </summary>
+    /// <param name="value"></param>
     public void IsOnScreenMovement(bool value)
     {
         _isOnScreenMovement = value;
     }
-
-
-    public void MoveUpLeft()
+    
+    /// <summary>
+    /// Method HandleDiagonalMovement
+    /// This method handle the digital diagonal movement [Virtual gamepad]
+    /// </summary>
+    /// <param name="value">String with x and y values</param>
+    public void HandleDiagonalMovement(string value)
     {
-        _hMove = -1; _vMove = 1;
+        var aStr = value.Split(",");
+        _hMove = float.Parse(aStr[0]);
+        _vMove = float.Parse(aStr[1]);
         IsOnScreenMovement(true);
     }
-
-    public void MoveUpRight()
-    {
-        _hMove = 1; _vMove = 1;
-        Debug.Log(" *** mov : " + _hMove + " / " + _vMove);
-        IsOnScreenMovement(true);
-    }
-
-    public void MoveDownLeft()
-    {
-        _hMove = -1; _vMove = -1;
-        IsOnScreenMovement(true);
-    }
-
-    public void MoveDownRight()
-    {
-        _hMove = 1; _vMove = -1;
-        IsOnScreenMovement(true);
-    }
+    
     
     /// <summary>
     /// Method MoveXplayerAuto

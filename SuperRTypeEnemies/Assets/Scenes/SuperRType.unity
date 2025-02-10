@@ -533,7 +533,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 164, y: -81}
-  m_SizeDelta: {x: 60, y: 40}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &65277220
 MonoBehaviour:
@@ -622,7 +622,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 84.80217, y: -167}
-  m_SizeDelta: {x: 60, y: 40}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &106554194
 MonoBehaviour:
@@ -712,7 +712,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 164.6, y: -162.8}
-  m_SizeDelta: {x: 30, y: 70}
+  m_SizeDelta: {x: 50, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &136333448
 MonoBehaviour:
@@ -784,14 +784,14 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 245538397}
           m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: MoveDownRight
-          m_Mode: 1
+          m_MethodName: HandleDiagonalMovement
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: 1,-1
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
@@ -1794,7 +1794,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: -1, y: -81}
-  m_SizeDelta: {x: 60, y: 40}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &508807231
 MonoBehaviour:
@@ -2268,7 +2268,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 6.4, y: -0.6000061}
-  m_SizeDelta: {x: 30, y: 70}
+  m_SizeDelta: {x: 50, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712864004
 MonoBehaviour:
@@ -2340,14 +2340,14 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 245538397}
           m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: MoveUpLeft
-          m_Mode: 1
+          m_MethodName: HandleDiagonalMovement
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: -1,1
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
@@ -2596,7 +2596,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 4.7, y: -159.7}
-  m_SizeDelta: {x: 30, y: 70}
+  m_SizeDelta: {x: 50, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &841775921
 MonoBehaviour:
@@ -2668,14 +2668,14 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 245538397}
           m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: MoveDownLeft
-          m_Mode: 1
+          m_MethodName: HandleDiagonalMovement
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: -1,-1
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
@@ -3730,7 +3730,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 84.795105, y: 1}
-  m_SizeDelta: {x: 60, y: 40}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1581167819
 MonoBehaviour:
@@ -4375,7 +4375,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 163.3, y: -6.100006}
-  m_SizeDelta: {x: 30, y: 70}
+  m_SizeDelta: {x: 50, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1992601966
 MonoBehaviour:
@@ -4447,14 +4447,14 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 245538397}
           m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: MoveUpRight
-          m_Mode: 1
+          m_MethodName: HandleDiagonalMovement
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: 1,1
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
