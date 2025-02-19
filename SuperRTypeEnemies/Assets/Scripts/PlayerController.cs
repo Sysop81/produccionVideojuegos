@@ -233,7 +233,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ManageGameOver()
     {
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
+        Application.Quit();
         Debug.Log("¡¡¡ End Game !!!");
     }
 
